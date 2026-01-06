@@ -734,8 +734,10 @@ const Game = {
     applySingleQubit(gate, idx) {
         const state = this.qubits[idx];
         if (state.startsWith('B')) {
-            // Applying single qubit gate to entangled state - simplified
-            this.qubits[idx] = this.transformBell(gate, state, idx);
+            // Applying single qubit gate to entangled state - both qubits change together
+            const newBell = this.transformBell(gate, state, idx);
+            this.qubits[0] = newBell;
+            this.qubits[1] = newBell;
         } else {
             this.qubits[idx] = TRANSFORMS[gate]?.[state] || state;
         }
@@ -765,13 +767,15 @@ const Game = {
             // Creating entanglement from superposition
             if ((s0 === '+' || s0 === '-') && (s1 === '0' || s1 === '1')) {
                 if (ctrl === 0) {
-                    this.qubits = [s0 === '+' ? 'B00' : 'B01'];
+                    const bell = s0 === '+' ? 'B00' : 'B01';
+                    this.qubits = [bell, bell];  // Keep both qubits, both show Bell state
                     return;
                 }
             }
             if ((s1 === '+' || s1 === '-') && (s0 === '0' || s0 === '1')) {
                 if (ctrl === 1) {
-                    this.qubits = [s1 === '+' ? 'B00' : 'B01'];
+                    const bell = s1 === '+' ? 'B00' : 'B01';
+                    this.qubits = [bell, bell];  // Keep both qubits, both show Bell state
                     return;
                 }
             }
@@ -792,7 +796,7 @@ const Game = {
         if (gate === 'CZ') {
             // CZ creates entanglement from |++⟩
             if (s0 === '+' && s1 === '+') {
-                this.qubits = ['B00'];
+                this.qubits = ['B00', 'B00'];  // Keep both qubits
                 return;
             }
             // CZ on ++ with different phases
