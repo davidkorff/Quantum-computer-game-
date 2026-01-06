@@ -310,34 +310,45 @@ const Game = {
     qubits: [],
     target: [],
     gate: null,
+    initialized: false,
 
     init() {
+        if (this.initialized) return;
+        this.initialized = true;
         this.load();
         this.updateStats();
-        setTimeout(() => {
-            document.getElementById('loading').classList.add('hidden');
-            this.show('main-menu');
-        }, 800);
+        document.getElementById('loading').classList.add('hidden');
+        this.show('main-menu');
     },
 
     load() {
-        const s = localStorage.getItem('qq_save');
-        this.data = s ? JSON.parse(s) : { done: {}, stars: {}, unlocked: ['w1'] };
+        try {
+            const s = localStorage.getItem('qq_save');
+            this.data = s ? JSON.parse(s) : { done: {}, stars: {}, unlocked: ['w1'] };
+        } catch (e) {
+            this.data = { done: {}, stars: {}, unlocked: ['w1'] };
+        }
     },
 
-    save() { localStorage.setItem('qq_save', JSON.stringify(this.data)); },
+    save() {
+        try {
+            localStorage.setItem('qq_save', JSON.stringify(this.data));
+        } catch (e) {}
+    },
 
     updateStats() {
+        if (!this.data) this.load();
         let stars = 0, levels = 0;
-        Object.values(this.data.stars).forEach(s => { stars += s; levels++; });
+        Object.values(this.data.stars || {}).forEach(s => { stars += s; levels++; });
         document.getElementById('total-stars').textContent = stars;
         document.getElementById('levels-done').textContent = levels;
-        document.getElementById('worlds-done').textContent = Math.max(0, this.data.unlocked.length - 1);
+        document.getElementById('worlds-done').textContent = Math.max(0, (this.data.unlocked || ['w1']).length - 1);
     },
 
     show(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id)?.classList.add('active');
+        const el = document.getElementById(id);
+        if (el) el.classList.add('active');
     },
 
     showMenu() { this.show('main-menu'); this.updateStats(); },
@@ -345,8 +356,10 @@ const Game = {
     hideHelp() { document.getElementById('help-modal').classList.remove('show'); },
 
     showWorldSelect() {
+        if (!this.data) this.load();
         this.show('world-select');
         const g = document.getElementById('worlds-grid');
+        if (!g) return;
         g.innerHTML = '';
         WORLDS.forEach(w => {
             const unlocked = this.data.unlocked.includes(w.id);
@@ -651,7 +664,12 @@ const WORLDS = [
     }
 ];
 
-window.onload = () => Game.init();
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => Game.init());
+} else {
+    Game.init();
+}
 </script>
 </body>
 </html>
