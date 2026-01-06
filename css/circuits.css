@@ -1,0 +1,558 @@
+/* ====================================
+   Quantum Quest - Circuit & Lab Styles
+   ==================================== */
+
+/* Lab Container */
+.lab-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.lab-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.lab-header h1 {
+    margin-bottom: var(--spacing-sm);
+}
+
+.lab-workspace {
+    display: grid;
+    grid-template-columns: 250px 1fr 300px;
+    gap: var(--spacing-lg);
+    min-height: calc(100vh - 250px);
+}
+
+/* Lab Sidebar - Gate Palette */
+.lab-sidebar {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    overflow-y: auto;
+    max-height: calc(100vh - 180px);
+}
+
+.gate-palette h3 {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--quantum-blue);
+}
+
+.gate-category {
+    margin-bottom: var(--spacing-lg);
+}
+
+.gate-category h4 {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.gates-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+}
+
+.gate-item {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm);
+    text-align: center;
+    cursor: grab;
+    transition: all var(--transition-fast);
+    border: 2px solid transparent;
+}
+
+.gate-item:hover {
+    border-color: var(--accent-primary);
+    transform: scale(1.05);
+}
+
+.gate-item:active {
+    cursor: grabbing;
+}
+
+.gate-symbol {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--quantum-blue);
+    font-family: var(--font-mono);
+}
+
+.gate-name {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+/* Circuit Presets */
+.circuit-presets {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.circuit-presets h3 {
+    font-size: 1rem;
+    margin-bottom: var(--spacing-md);
+    color: var(--quantum-blue);
+}
+
+.preset-btn {
+    display: block;
+    width: 100%;
+    background: var(--bg-tertiary);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-bottom: var(--spacing-sm);
+    transition: all var(--transition-fast);
+    font-family: inherit;
+    text-align: left;
+}
+
+.preset-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+    background: var(--bg-hover);
+}
+
+/* Lab Main Area */
+.lab-main {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+/* Circuit Toolbar */
+.circuit-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    flex-wrap: wrap;
+}
+
+.toolbar-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+}
+
+.toolbar-btn {
+    background: var(--bg-tertiary);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: inherit;
+}
+
+.toolbar-btn:hover {
+    border-color: var(--accent-primary);
+    color: var(--text-primary);
+}
+
+.toolbar-btn.primary {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+}
+
+.toolbar-btn.primary:hover {
+    background: var(--accent-secondary);
+}
+
+.qubit-count {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.qubit-count span {
+    color: var(--quantum-blue);
+    font-weight: 600;
+}
+
+/* Circuit Canvas */
+.circuit-canvas-container {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    min-height: 300px;
+    position: relative;
+    overflow: auto;
+}
+
+#circuit-canvas {
+    display: block;
+    min-width: 100%;
+    min-height: 100%;
+}
+
+/* Simulation Results */
+.simulation-results {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+    flex: 1;
+    min-height: 250px;
+    display: flex;
+    flex-direction: column;
+}
+
+.results-tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.results-tab {
+    background: transparent;
+    border: none;
+    padding: var(--spacing-md) var(--spacing-lg);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+}
+
+.results-tab:hover {
+    color: var(--text-primary);
+}
+
+.results-tab.active {
+    color: var(--quantum-blue);
+    border-bottom-color: var(--quantum-blue);
+}
+
+.results-content {
+    flex: 1;
+    overflow: auto;
+}
+
+.results-panel {
+    display: none;
+    padding: var(--spacing-md);
+    height: 100%;
+}
+
+.results-panel.active {
+    display: block;
+}
+
+/* State Vector Display */
+.statevector-display {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+}
+
+.state-term {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    margin: var(--spacing-xs);
+}
+
+.state-amplitude {
+    color: var(--quantum-blue);
+}
+
+.state-basis {
+    color: var(--quantum-purple);
+}
+
+/* Probability Chart */
+.probability-chart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+}
+
+.prob-bar-container {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.prob-label {
+    width: 80px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.prob-bar {
+    flex: 1;
+    height: 24px;
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+}
+
+.prob-bar-fill {
+    height: 100%;
+    background: var(--accent-gradient);
+    transition: width var(--transition-normal);
+}
+
+.prob-value {
+    width: 60px;
+    text-align: right;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--quantum-blue);
+}
+
+/* Bloch Spheres */
+.bloch-spheres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.bloch-sphere-container {
+    text-align: center;
+}
+
+.bloch-sphere-canvas {
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+.bloch-sphere-label {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: var(--spacing-xs);
+}
+
+/* Matrix Display */
+.matrix-display {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    overflow-x: auto;
+}
+
+.matrix-table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+
+.matrix-table td {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    text-align: center;
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    min-width: 60px;
+}
+
+.matrix-table td.real {
+    color: var(--quantum-blue);
+}
+
+.matrix-table td.imag {
+    color: var(--quantum-pink);
+}
+
+/* Lab Info Panel */
+.lab-info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.gate-info, .quantum-state-info, .code-export {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-md);
+    border: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.gate-info h3, .quantum-state-info h3, .code-export h3 {
+    font-size: 0.9rem;
+    color: var(--quantum-blue);
+    margin-bottom: var(--spacing-md);
+}
+
+.info-placeholder {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+#gate-info-name {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+#gate-info-description {
+    font-size: 0.85rem;
+    margin-bottom: var(--spacing-md);
+}
+
+#gate-info-matrix {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--bg-tertiary);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+}
+
+#current-state-display {
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+    color: var(--quantum-blue);
+    text-align: center;
+    padding: var(--spacing-md);
+    background: var(--bg-tertiary);
+    border-radius: var(--radius-md);
+}
+
+/* Code Export */
+.export-tabs {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+}
+
+.export-tab {
+    background: var(--bg-tertiary);
+    border: none;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: inherit;
+}
+
+.export-tab:hover {
+    color: var(--text-primary);
+}
+
+.export-tab.active {
+    background: var(--accent-primary);
+    color: white;
+}
+
+.code-output {
+    background: var(--bg-tertiary);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: var(--spacing-md);
+}
+
+#copy-code-btn {
+    width: 100%;
+}
+
+/* Circuit Drop Zone Highlight */
+.circuit-canvas-container.drag-over {
+    border-color: var(--accent-primary);
+    box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.2);
+}
+
+/* Gate on Circuit */
+.circuit-gate {
+    fill: var(--accent-primary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.circuit-gate:hover {
+    filter: brightness(1.2);
+}
+
+.circuit-gate.selected {
+    stroke: var(--quantum-blue);
+    stroke-width: 3;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .lab-workspace {
+        grid-template-columns: 200px 1fr;
+    }
+
+    .lab-info-panel {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        flex-direction: row;
+        background: var(--bg-secondary);
+        border-top: 1px solid rgba(99, 102, 241, 0.2);
+        padding: var(--spacing-md);
+        gap: var(--spacing-md);
+        overflow-x: auto;
+        z-index: 100;
+    }
+
+    .lab-info-panel > div {
+        min-width: 250px;
+    }
+
+    .lab-main {
+        margin-bottom: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .lab-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .lab-sidebar {
+        max-height: none;
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--spacing-md);
+    }
+
+    .gate-palette, .circuit-presets {
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .circuit-presets {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    .circuit-toolbar {
+        justify-content: center;
+    }
+
+    .results-tabs {
+        overflow-x: auto;
+    }
+
+    .results-tab {
+        padding: var(--spacing-sm) var(--spacing-md);
+        white-space: nowrap;
+    }
+}

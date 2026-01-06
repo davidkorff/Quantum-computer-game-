@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Quest - The Complete Quantum Computing Journey</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/game.css">
+    <link rel="stylesheet" href="css/circuits.css">
+    <link rel="stylesheet" href="css/challenges.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚛️</text></svg>">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="quantum-loader">
+                <div class="qubit-orbit">
+                    <div class="electron"></div>
+                </div>
+                <div class="nucleus">Q</div>
+            </div>
+            <h1>Quantum Quest</h1>
+            <p class="loading-text">Initializing quantum state...</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <nav id="main-nav" class="main-nav hidden">
+        <div class="nav-brand">
+            <span class="quantum-icon">⚛️</span>
+            <span class="brand-text">Quantum Quest</span>
+        </div>
+        <div class="nav-stats">
+            <div class="stat-item">
+                <span class="stat-icon">⚡</span>
+                <span id="nav-xp" class="stat-value">0 XP</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🎯</span>
+                <span id="nav-level" class="stat-value">Level 1</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-icon">🏆</span>
+                <span id="nav-achievements" class="stat-value">0</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <button class="nav-btn active" data-screen="home">Home</button>
+            <button class="nav-btn" data-screen="learn">Learn</button>
+            <button class="nav-btn" data-screen="lab">Quantum Lab</button>
+            <button class="nav-btn" data-screen="challenges">Challenges</button>
+            <button class="nav-btn" data-screen="achievements">Achievements</button>
+        </div>
+        <button id="menu-toggle" class="menu-toggle">☰</button>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="mobile-menu hidden">
+        <button class="nav-btn" data-screen="home">🏠 Home</button>
+        <button class="nav-btn" data-screen="learn">📚 Learn</button>
+        <button class="nav-btn" data-screen="lab">🔬 Quantum Lab</button>
+        <button class="nav-btn" data-screen="challenges">🎮 Challenges</button>
+        <button class="nav-btn" data-screen="achievements">🏆 Achievements</button>
+    </div>
+
+    <!-- Home Screen -->
+    <section id="home-screen" class="screen hidden">
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Quantum Quest</span>
+                </h1>
+                <p class="hero-subtitle">Master Quantum Computing From Theory to Practice</p>
+                <p class="hero-description">
+                    Embark on an epic journey through the quantum realm. Learn quantum mechanics,
+                    build quantum computers, write quantum algorithms, and become a quantum engineer.
+                </p>
+                <div class="hero-buttons">
+                    <button id="start-journey-btn" class="btn btn-primary btn-large">
+                        <span>Begin Your Journey</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                    <button id="continue-btn" class="btn btn-secondary btn-large hidden">
+                        <span>Continue Learning</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <canvas id="bloch-sphere-hero"></canvas>
+            </div>
+        </div>
+
+        <div class="features-section">
+            <h2>Your Quantum Journey</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>8 Learning Eras</h3>
+                    <p>From quantum mechanics foundations to cutting-edge applications</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3>Interactive Lab</h3>
+                    <p>Build and simulate quantum circuits with our visual simulator</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>Coding Challenges</h3>
+                    <p>Write real quantum algorithms and see them execute</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛠️</div>
+                    <h3>Hardware Building</h3>
+                    <p>Learn to design and troubleshoot quantum computer hardware</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Achievements</h3>
+                    <p>Earn badges and track your progress to quantum mastery</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Deep Knowledge</h3>
+                    <p>Accurate, detailed content for aspiring quantum engineers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress-overview" id="progress-overview">
+            <h2>Your Progress</h2>
+            <div class="progress-stats">
+                <div class="progress-stat">
+                    <div class="progress-circle" id="overall-progress-circle">
+                        <span class="progress-value">0%</span>
+                    </div>
+                    <span class="progress-label">Overall Progress</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="big-number" id="lessons-completed">0</span>
+                    <span class="progress-label">Lessons Completed</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="big-number" id="challenges-solved">0</span>
+                    <span class="progress-label">Challenges Solved</span>
+                </div>
+                <div class="progress-stat">
+                    <span class="big-number" id="circuits-built">0</span>
+                    <span class="progress-label">Circuits Built</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learn Screen -->
+    <section id="learn-screen" class="screen hidden">
+        <div class="learn-header">
+            <h1>Learning Path</h1>
+            <p>Master quantum computing through 8 comprehensive eras</p>
+        </div>
+
+        <div class="eras-timeline" id="eras-timeline">
+            <!-- Era cards will be dynamically generated -->
+        </div>
+    </section>
+
+    <!-- Era Content Screen -->
+    <section id="era-screen" class="screen hidden">
+        <div class="era-header" id="era-header">
+            <button class="back-btn" id="back-to-learn">← Back to Learning Path</button>
+            <div class="era-title-section">
+                <span class="era-number" id="era-number">Era 1</span>
+                <h1 id="era-title">Quantum Mechanics Foundations</h1>
+                <p id="era-description"></p>
+            </div>
+            <div class="era-progress-bar">
+                <div class="era-progress-fill" id="era-progress-fill"></div>
+            </div>
+        </div>
+
+        <div class="era-content" id="era-content">
+            <div class="lessons-list" id="lessons-list">
+                <!-- Lessons will be dynamically generated -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Lesson Screen -->
+    <section id="lesson-screen" class="screen hidden">
+        <div class="lesson-header">
+            <button class="back-btn" id="back-to-era">← Back to Era</button>
+            <div class="lesson-progress">
+                <span id="lesson-progress-text">1 / 5</span>
+                <div class="lesson-progress-bar">
+                    <div class="lesson-progress-fill" id="lesson-progress-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="lesson-content" id="lesson-content">
+            <!-- Lesson content will be dynamically loaded -->
+        </div>
+
+        <div class="lesson-navigation">
+            <button class="btn btn-secondary" id="prev-lesson-btn">← Previous</button>
+            <button class="btn btn-primary" id="next-lesson-btn">Next →</button>
+        </div>
+    </section>
+
+    <!-- Quantum Lab Screen -->
+    <section id="lab-screen" class="screen hidden">
+        <div class="lab-container">
+            <div class="lab-header">
+                <h1>Quantum Lab</h1>
+                <p>Build and simulate quantum circuits in real-time</p>
+            </div>
+
+            <div class="lab-workspace">
+                <div class="lab-sidebar">
+                    <div class="gate-palette">
+                        <h3>Quantum Gates</h3>
+                        <div class="gate-category">
+                            <h4>Single-Qubit Gates</h4>
+                            <div class="gates-grid">
+                                <div class="gate-item" draggable="true" data-gate="H">
+                                    <span class="gate-symbol">H</span>
+                                    <span class="gate-name">Hadamard</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="X">
+                                    <span class="gate-symbol">X</span>
+                                    <span class="gate-name">Pauli-X</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="Y">
+                                    <span class="gate-symbol">Y</span>
+                                    <span class="gate-name">Pauli-Y</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="Z">
+                                    <span class="gate-symbol">Z</span>
+                                    <span class="gate-name">Pauli-Z</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="S">
+                                    <span class="gate-symbol">S</span>
+                                    <span class="gate-name">S Gate</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="T">
+                                    <span class="gate-symbol">T</span>
+                                    <span class="gate-name">T Gate</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="Rx">
+                                    <span class="gate-symbol">Rx</span>
+                                    <span class="gate-name">Rotate X</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="Ry">
+                                    <span class="gate-symbol">Ry</span>
+                                    <span class="gate-name">Rotate Y</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="Rz">
+                                    <span class="gate-symbol">Rz</span>
+                                    <span class="gate-name">Rotate Z</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gate-category">
+                            <h4>Multi-Qubit Gates</h4>
+                            <div class="gates-grid">
+                                <div class="gate-item" draggable="true" data-gate="CNOT">
+                                    <span class="gate-symbol">⊕</span>
+                                    <span class="gate-name">CNOT</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="CZ">
+                                    <span class="gate-symbol">CZ</span>
+                                    <span class="gate-name">Ctrl-Z</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="SWAP">
+                                    <span class="gate-symbol">×</span>
+                                    <span class="gate-name">SWAP</span>
+                                </div>
+                                <div class="gate-item" draggable="true" data-gate="TOFFOLI">
+                                    <span class="gate-symbol">⊕</span>
+                                    <span class="gate-name">Toffoli</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="gate-category">
+                            <h4>Measurement</h4>
+                            <div class="gates-grid">
+                                <div class="gate-item" draggable="true" data-gate="M">
+                                    <span class="gate-symbol">📏</span>
+                                    <span class="gate-name">Measure</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="circuit-presets">
+                        <h3>Circuit Templates</h3>
+                        <button class="preset-btn" data-preset="bell">Bell State</button>
+                        <button class="preset-btn" data-preset="ghz">GHZ State</button>
+                        <button class="preset-btn" data-preset="teleport">Teleportation</button>
+                        <button class="preset-btn" data-preset="grover2">Grover (2-qubit)</button>
+                        <button class="preset-btn" data-preset="qft">QFT (3-qubit)</button>
+                    </div>
+                </div>
+
+                <div class="lab-main">
+                    <div class="circuit-toolbar">
+                        <div class="toolbar-group">
+                            <button class="toolbar-btn" id="add-qubit-btn" title="Add Qubit">+ Qubit</button>
+                            <button class="toolbar-btn" id="remove-qubit-btn" title="Remove Qubit">- Qubit</button>
+                        </div>
+                        <div class="toolbar-group">
+                            <button class="toolbar-btn" id="clear-circuit-btn" title="Clear Circuit">Clear</button>
+                            <button class="toolbar-btn" id="reset-circuit-btn" title="Reset State">Reset</button>
+                        </div>
+                        <div class="toolbar-group">
+                            <button class="toolbar-btn primary" id="run-circuit-btn" title="Run Circuit">▶ Run</button>
+                            <button class="toolbar-btn" id="step-circuit-btn" title="Step Through">Step</button>
+                        </div>
+                        <div class="toolbar-group">
+                            <span class="qubit-count">Qubits: <span id="qubit-count">2</span></span>
+                        </div>
+                    </div>
+
+                    <div class="circuit-canvas-container">
+                        <canvas id="circuit-canvas"></canvas>
+                    </div>
+
+                    <div class="simulation-results">
+                        <div class="results-tabs">
+                            <button class="results-tab active" data-tab="statevector">State Vector</button>
+                            <button class="results-tab" data-tab="probabilities">Probabilities</button>
+                            <button class="results-tab" data-tab="bloch">Bloch Spheres</button>
+                            <button class="results-tab" data-tab="matrix">Unitary Matrix</button>
+                        </div>
+                        <div class="results-content">
+                            <div class="results-panel active" id="statevector-panel">
+                                <div class="statevector-display" id="statevector-display">
+                                    <!-- State vector will be displayed here -->
+                                </div>
+                            </div>
+                            <div class="results-panel" id="probabilities-panel">
+                                <div class="probability-chart" id="probability-chart">
+                                    <!-- Probability bars will be displayed here -->
+                                </div>
+                            </div>
+                            <div class="results-panel" id="bloch-panel">
+                                <div class="bloch-spheres" id="bloch-spheres">
+                                    <!-- Bloch spheres will be displayed here -->
+                                </div>
+                            </div>
+                            <div class="results-panel" id="matrix-panel">
+                                <div class="matrix-display" id="matrix-display">
+                                    <!-- Unitary matrix will be displayed here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lab-info-panel">
+                    <div class="gate-info" id="gate-info">
+                        <h3>Gate Information</h3>
+                        <p class="info-placeholder">Hover over a gate to see its details</p>
+                        <div class="gate-details hidden" id="gate-details">
+                            <h4 id="gate-info-name"></h4>
+                            <p id="gate-info-description"></p>
+                            <div class="gate-matrix" id="gate-info-matrix"></div>
+                        </div>
+                    </div>
+
+                    <div class="quantum-state-info">
+                        <h3>Current State</h3>
+                        <div id="current-state-display">|00⟩</div>
+                    </div>
+
+                    <div class="code-export">
+                        <h3>Export Code</h3>
+                        <div class="export-tabs">
+                            <button class="export-tab active" data-lang="qiskit">Qiskit</button>
+                            <button class="export-tab" data-lang="cirq">Cirq</button>
+                            <button class="export-tab" data-lang="qsharp">Q#</button>
+                        </div>
+                        <pre class="code-output" id="code-output"></pre>
+                        <button class="btn btn-secondary" id="copy-code-btn">Copy Code</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenges Screen -->
+    <section id="challenges-screen" class="screen hidden">
+        <div class="challenges-header">
+            <h1>Coding Challenges</h1>
+            <p>Test your quantum programming skills</p>
+            <div class="challenge-filters">
+                <button class="filter-btn active" data-difficulty="all">All</button>
+                <button class="filter-btn" data-difficulty="beginner">Beginner</button>
+                <button class="filter-btn" data-difficulty="intermediate">Intermediate</button>
+                <button class="filter-btn" data-difficulty="advanced">Advanced</button>
+                <button class="filter-btn" data-difficulty="expert">Expert</button>
+            </div>
+        </div>
+
+        <div class="challenges-grid" id="challenges-grid">
+            <!-- Challenge cards will be dynamically generated -->
+        </div>
+    </section>
+
+    <!-- Challenge Detail Screen -->
+    <section id="challenge-screen" class="screen hidden">
+        <div class="challenge-header">
+            <button class="back-btn" id="back-to-challenges">← Back to Challenges</button>
+            <div class="challenge-meta">
+                <span class="challenge-difficulty" id="challenge-difficulty">Beginner</span>
+                <span class="challenge-xp" id="challenge-xp">+100 XP</span>
+            </div>
+        </div>
+
+        <div class="challenge-container">
+            <div class="challenge-description">
+                <h1 id="challenge-title">Challenge Title</h1>
+                <div id="challenge-content" class="challenge-text">
+                    <!-- Challenge description will be loaded here -->
+                </div>
+                <div class="challenge-hints" id="challenge-hints">
+                    <h3>Hints</h3>
+                    <div class="hints-list"></div>
+                </div>
+            </div>
+
+            <div class="challenge-workspace">
+                <div class="code-editor-container">
+                    <div class="editor-header">
+                        <span>quantum_solution.py</span>
+                        <div class="editor-actions">
+                            <button class="editor-btn" id="reset-code-btn">Reset</button>
+                            <button class="editor-btn primary" id="run-code-btn">▶ Run</button>
+                            <button class="editor-btn success" id="submit-code-btn">Submit</button>
+                        </div>
+                    </div>
+                    <textarea id="code-editor" class="code-editor" spellcheck="false"></textarea>
+                </div>
+
+                <div class="output-container">
+                    <div class="output-header">
+                        <span>Output</span>
+                        <button class="clear-output-btn" id="clear-output-btn">Clear</button>
+                    </div>
+                    <div class="output-content" id="output-content">
+                        <p class="output-placeholder">Run your code to see output...</p>
+                    </div>
+                </div>
+
+                <div class="test-results" id="test-results">
+                    <h3>Test Results</h3>
+                    <div class="tests-list" id="tests-list">
+                        <!-- Test results will be displayed here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Achievements Screen -->
+    <section id="achievements-screen" class="screen hidden">
+        <div class="achievements-header">
+            <h1>Achievements</h1>
+            <div class="achievements-summary">
+                <div class="achievement-stat">
+                    <span class="stat-number" id="achievements-earned">0</span>
+                    <span class="stat-label">Earned</span>
+                </div>
+                <div class="achievement-stat">
+                    <span class="stat-number" id="achievements-total">0</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="achievement-stat">
+                    <span class="stat-number" id="total-xp">0</span>
+                    <span class="stat-label">Total XP</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="achievements-categories">
+            <div class="achievement-category">
+                <h2>🎓 Learning Milestones</h2>
+                <div class="achievements-grid" id="learning-achievements">
+                    <!-- Learning achievements -->
+                </div>
+            </div>
+
+            <div class="achievement-category">
+                <h2>🔬 Lab Mastery</h2>
+                <div class="achievements-grid" id="lab-achievements">
+                    <!-- Lab achievements -->
+                </div>
+            </div>
+
+            <div class="achievement-category">
+                <h2>💻 Coding Excellence</h2>
+                <div class="achievements-grid" id="coding-achievements">
+                    <!-- Coding achievements -->
+                </div>
+            </div>
+
+            <div class="achievement-category">
+                <h2>🏆 Special Achievements</h2>
+                <div class="achievements-grid" id="special-achievements">
+                    <!-- Special achievements -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quiz Modal -->
+    <div id="quiz-modal" class="modal hidden">
+        <div class="modal-content quiz-modal-content">
+            <div class="quiz-header">
+                <h2 id="quiz-title">Quick Check</h2>
+                <span class="quiz-progress" id="quiz-progress">1 / 5</span>
+            </div>
+            <div class="quiz-question" id="quiz-question">
+                <!-- Question will be loaded here -->
+            </div>
+            <div class="quiz-options" id="quiz-options">
+                <!-- Options will be loaded here -->
+            </div>
+            <div class="quiz-feedback hidden" id="quiz-feedback">
+                <!-- Feedback will be shown here -->
+            </div>
+            <div class="quiz-actions">
+                <button class="btn btn-primary" id="quiz-next-btn">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievement Popup -->
+    <div id="achievement-popup" class="achievement-popup hidden">
+        <div class="achievement-popup-content">
+            <div class="achievement-icon" id="popup-achievement-icon">🏆</div>
+            <div class="achievement-info">
+                <h3>Achievement Unlocked!</h3>
+                <p id="popup-achievement-name"></p>
+                <span class="achievement-xp" id="popup-achievement-xp">+100 XP</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Level Up Popup -->
+    <div id="levelup-popup" class="levelup-popup hidden">
+        <div class="levelup-content">
+            <div class="levelup-icon">⚡</div>
+            <h2>Level Up!</h2>
+            <p class="new-level">Level <span id="new-level-number">2</span></p>
+            <p class="levelup-message" id="levelup-message">You're making great progress!</p>
+            <button class="btn btn-primary" id="close-levelup-btn">Continue</button>
+        </div>
+    </div>
+
+    <!-- Hardware Builder Modal -->
+    <div id="hardware-modal" class="modal hidden">
+        <div class="modal-content hardware-modal-content">
+            <button class="modal-close" id="close-hardware-modal">×</button>
+            <div class="hardware-builder" id="hardware-builder">
+                <!-- Hardware building interface -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/quantum-math.js"></script>
+    <script src="js/quantum-simulator.js"></script>
+    <script src="js/circuit-renderer.js"></script>
+    <script src="js/bloch-sphere.js"></script>
+    <script src="js/game-data.js"></script>
+    <script src="js/progress-manager.js"></script>
+    <script src="js/challenges.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
