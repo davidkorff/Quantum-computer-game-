@@ -32,6 +32,10 @@ class QuantumQuest {
 
         // Bind methods
         this.init = this.init.bind(this);
+        this.checkQuizAnswer = this.checkQuizAnswer.bind(this);
+        this.selectQuizOption = this.selectQuizOption.bind(this);
+        this.renderQuizQuestion = this.renderQuizQuestion.bind(this);
+        this.finishQuiz = this.finishQuiz.bind(this);
     }
 
     async init() {
@@ -446,8 +450,13 @@ class QuantumQuest {
         });
 
         document.getElementById('quiz-feedback').classList.add('hidden');
-        document.getElementById('quiz-next-btn').textContent = 'Check';
-        document.getElementById('quiz-next-btn').onclick = () => this.checkQuizAnswer();
+
+        const nextBtn = document.getElementById('quiz-next-btn');
+        nextBtn.textContent = 'Check';
+        // Remove old listeners and add new one
+        const newBtn = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(newBtn, nextBtn);
+        newBtn.addEventListener('click', this.checkQuizAnswer);
     }
 
     selectQuizOption(index) {
@@ -459,7 +468,14 @@ class QuantumQuest {
     checkQuizAnswer() {
         const q = this.quizData.questions[this.quizIndex];
         const selected = document.querySelector('.quiz-option.selected');
-        if (!selected) return;
+        if (!selected) {
+            // Visual feedback that user needs to select an option
+            document.getElementById('quiz-options').style.animation = 'shake 0.3s';
+            setTimeout(() => {
+                document.getElementById('quiz-options').style.animation = '';
+            }, 300);
+            return;
+        }
 
         const selectedIndex = Array.from(document.querySelectorAll('.quiz-option')).indexOf(selected);
         const isCorrect = selectedIndex === q.correct;
@@ -483,12 +499,14 @@ class QuantumQuest {
         `;
         feedback.classList.remove('hidden');
 
-        document.getElementById('quiz-next-btn').textContent =
-            this.quizIndex < this.quizData.questions.length - 1 ? 'Next Question' : 'See Results';
-        document.getElementById('quiz-next-btn').onclick = () => {
+        const nextBtn = document.getElementById('quiz-next-btn');
+        nextBtn.textContent = this.quizIndex < this.quizData.questions.length - 1 ? 'Next Question' : 'See Results';
+        const newBtn = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(newBtn, nextBtn);
+        newBtn.addEventListener('click', () => {
             this.quizIndex++;
             this.renderQuizQuestion();
-        };
+        });
     }
 
     finishQuiz() {
@@ -526,11 +544,14 @@ class QuantumQuest {
         }
         this.updateNavStats();
 
-        document.getElementById('quiz-next-btn').textContent = 'Continue';
-        document.getElementById('quiz-next-btn').onclick = () => {
+        const nextBtn = document.getElementById('quiz-next-btn');
+        nextBtn.textContent = 'Continue';
+        const newBtn = nextBtn.cloneNode(true);
+        nextBtn.parentNode.replaceChild(newBtn, nextBtn);
+        newBtn.addEventListener('click', () => {
             document.getElementById('quiz-modal').classList.add('hidden');
             this.showEraScreen(this.currentEra);
-        };
+        });
     }
 
     // ================================
