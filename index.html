@@ -39,9 +39,10 @@
 
         /* Main Menu */
         #main-menu {
-            min-height: 100vh; display: flex; flex-direction: column;
+            min-height: 100vh; flex-direction: column;
             align-items: center; justify-content: center; padding: 20px; text-align: center;
         }
+        #main-menu.active { display: flex; }
         #main-menu h1 {
             font-size: 3.5rem;
             background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
@@ -199,8 +200,7 @@
 
         /* Screens */
         .screen { display: none; }
-        .screen.active { display: flex; flex-direction: column; }
-        #main-menu.active { display: flex; }
+        .screen.active { display: block; }
         #world-select.active, #level-select.active, #game-screen.active { display: block; }
 
         /* Responsive */
