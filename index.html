@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantum Quest - Learn Quantum Computing Through Play</title>
+    <title>Quantum Quest - Master Quantum Computing</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚛️</text></svg>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --bg-dark: #0a0a1a;
             --bg-card: #12122a;
+            --bg-code: #1a1a2e;
             --accent: #6366f1;
             --accent-glow: rgba(99, 102, 241, 0.5);
             --success: #10b981;
@@ -17,199 +18,177 @@
             --error: #ef4444;
             --text: #ffffff;
             --text-dim: #888;
+            --cyan: #22d3ee;
+            --pink: #ec4899;
+            --purple: #a855f7;
         }
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-dark); color: var(--text); min-height: 100vh; overflow-x: hidden; }
 
-        /* Loading */
-        #loading {
-            position: fixed; inset: 0; background: var(--bg-dark);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 9999; transition: opacity 0.5s;
-        }
+        #loading { position: fixed; inset: 0; background: var(--bg-dark); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s; }
         #loading.hidden { opacity: 0; pointer-events: none; }
         .loader { width: 80px; height: 80px; border: 4px solid var(--bg-card); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         #loading h1 { margin-top: 20px; font-size: 1.5rem; }
 
-        /* Main Menu */
-        #main-menu {
-            min-height: 100vh; flex-direction: column;
-            align-items: center; justify-content: center; padding: 20px; text-align: center;
-        }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        #main-menu { min-height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
         #main-menu.active { display: flex; }
-        #main-menu h1 {
-            font-size: 3.5rem;
-            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
-        }
-        .subtitle { color: var(--text-dim); font-size: 1.1rem; margin-bottom: 40px; }
-        .menu-btn {
-            display: block; width: 280px; padding: 18px 30px; margin: 10px;
-            font-size: 1.1rem; font-weight: 600; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s;
-        }
-        .menu-btn.primary {
-            background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white;
-            box-shadow: 0 4px 20px var(--accent-glow);
-        }
+        #main-menu h1 { font-size: 3rem; background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .subtitle { color: var(--text-dim); font-size: 1rem; margin-bottom: 30px; }
+        .menu-btn { display: block; width: 280px; padding: 16px 28px; margin: 8px; font-size: 1rem; font-weight: 600; border: none; border-radius: 12px; cursor: pointer; transition: all 0.2s; }
+        .menu-btn.primary { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; box-shadow: 0 4px 20px var(--accent-glow); }
         .menu-btn.primary:hover { transform: translateY(-3px); box-shadow: 0 8px 30px var(--accent-glow); }
         .menu-btn.secondary { background: var(--bg-card); color: white; border: 2px solid var(--accent); }
         .menu-btn.secondary:hover { background: rgba(99, 102, 241, 0.2); }
-        .stats-bar { display: flex; gap: 30px; margin-top: 40px; padding: 20px 40px; background: var(--bg-card); border-radius: 16px; flex-wrap: wrap; justify-content: center; }
-        .stat { text-align: center; min-width: 80px; }
-        .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
-        .stat-label { font-size: 0.85rem; color: var(--text-dim); }
+        .stats-bar { display: flex; gap: 25px; margin-top: 30px; padding: 18px 35px; background: var(--bg-card); border-radius: 16px; flex-wrap: wrap; justify-content: center; }
+        .stat { text-align: center; min-width: 70px; }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: var(--accent); }
+        .stat-label { font-size: 0.8rem; color: var(--text-dim); }
 
-        /* World Select */
-        #world-select { min-height: 100vh; padding: 20px; }
-        .back-btn { background: none; border: none; color: var(--text-dim); font-size: 1rem; cursor: pointer; padding: 10px 20px; margin-bottom: 20px; }
+        #world-select, #level-select { min-height: 100vh; padding: 20px; }
+        .back-btn { background: none; border: none; color: var(--text-dim); font-size: 1rem; cursor: pointer; padding: 10px 20px; margin-bottom: 15px; }
         .back-btn:hover { color: var(--text); }
-        .page-title { text-align: center; font-size: 2rem; margin-bottom: 30px; }
-        .worlds-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; padding: 20px; }
-        .world-card {
-            background: var(--bg-card); border-radius: 20px; padding: 25px; cursor: pointer;
-            transition: all 0.3s; border: 2px solid transparent; position: relative; overflow: hidden;
-        }
-        .world-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2); }
+        .page-title { text-align: center; font-size: 1.8rem; margin-bottom: 10px; }
+        .page-subtitle { text-align: center; color: var(--text-dim); margin-bottom: 25px; font-size: 0.9rem; }
+
+        .worlds-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; padding: 15px; }
+        .world-card { background: var(--bg-card); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; position: relative; overflow: hidden; }
+        .world-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.15); }
         .world-card.locked { opacity: 0.5; cursor: not-allowed; }
         .world-card.locked:hover { transform: none; border-color: transparent; box-shadow: none; }
-        .world-icon { font-size: 2.5rem; margin-bottom: 12px; }
-        .world-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
-        .world-card p { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 15px; line-height: 1.4; }
-        .world-progress { height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
+        .world-icon { font-size: 2rem; margin-bottom: 10px; }
+        .world-card h3 { font-size: 1.1rem; margin-bottom: 6px; }
+        .world-card p { color: var(--text-dim); font-size: 0.8rem; margin-bottom: 12px; line-height: 1.4; }
+        .world-progress { height: 5px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden; }
         .world-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #a855f7); transition: width 0.3s; }
-        .world-stars { position: absolute; top: 15px; right: 15px; font-size: 1rem; }
-        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2.5rem; opacity: 0.5; }
+        .world-stars { position: absolute; top: 12px; right: 12px; font-size: 0.85rem; }
+        .world-tier { position: absolute; top: 12px; left: 12px; font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; background: rgba(99, 102, 241, 0.3); color: var(--accent); font-weight: 600; }
+        .lock-icon { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; opacity: 0.5; }
 
-        /* Level Select */
-        .level-header { text-align: center; max-width: 600px; margin: 0 auto 30px; }
-        .level-header h2 { font-size: 1.8rem; margin-bottom: 8px; }
-        .level-header p { color: var(--text-dim); }
-        .levels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 12px; max-width: 600px; margin: 0 auto; padding: 20px; }
-        .level-btn {
-            aspect-ratio: 1; background: var(--bg-card); border: 2px solid transparent; border-radius: 14px;
-            font-size: 1.4rem; font-weight: 700; color: var(--text); cursor: pointer; transition: all 0.2s;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-        }
+        .level-header { text-align: center; max-width: 600px; margin: 0 auto 25px; }
+        .level-header h2 { font-size: 1.6rem; margin-bottom: 6px; }
+        .level-header p { color: var(--text-dim); font-size: 0.9rem; }
+        .levels-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; max-width: 550px; margin: 0 auto; padding: 15px; }
+        .level-btn { aspect-ratio: 1; background: var(--bg-card); border: 2px solid transparent; border-radius: 12px; font-size: 1.2rem; font-weight: 700; color: var(--text); cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
         .level-btn:hover { border-color: var(--accent); transform: scale(1.05); }
         .level-btn.completed { background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1)); border-color: var(--success); }
-        .level-btn.current { border-color: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
         .level-btn.locked { opacity: 0.35; cursor: not-allowed; }
         .level-btn.locked:hover { transform: none; border-color: transparent; }
-        .level-stars { font-size: 0.65rem; letter-spacing: 1px; }
+        .level-stars { font-size: 0.55rem; letter-spacing: 1px; }
 
-        /* Game Screen */
         #game-screen { min-height: 100vh; display: flex; flex-direction: column; }
-        .game-header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; background: var(--bg-card); border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .game-title { font-size: 1rem; font-weight: 600; }
-        .game-info { display: flex; gap: 15px; align-items: center; }
-        .game-moves { padding: 6px 14px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.9rem; }
-        .game-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px; }
-        .quit-btn { background: none; border: 1px solid var(--error); color: var(--error); padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
+        .game-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; background: var(--bg-card); border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .game-title { font-size: 0.95rem; font-weight: 600; }
+        .game-info { display: flex; gap: 12px; align-items: center; }
+        .game-moves { padding: 5px 12px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 0.85rem; }
+        .game-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 12px; overflow-y: auto; }
+        .quit-btn { background: none; border: 1px solid var(--error); color: var(--error); padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; }
         .quit-btn:hover { background: rgba(239, 68, 68, 0.1); }
 
-        /* Puzzle */
-        .puzzle-container { background: var(--bg-card); border-radius: 20px; padding: 25px; margin: 15px; max-width: 700px; width: 100%; }
-        .puzzle-instruction { text-align: center; margin-bottom: 20px; font-size: 1rem; color: var(--text-dim); line-height: 1.5; }
+        .puzzle-container { background: var(--bg-card); border-radius: 18px; padding: 22px; margin: 12px; max-width: 750px; width: 100%; }
+        .puzzle-instruction { text-align: center; margin-bottom: 18px; font-size: 0.95rem; color: var(--text-dim); line-height: 1.5; }
         .puzzle-instruction strong { color: var(--accent); }
+        .puzzle-instruction code { background: var(--bg-code); padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; color: var(--cyan); }
 
-        /* Target */
-        .target-display { text-align: center; padding: 15px; background: rgba(16, 185, 129, 0.1); border: 2px dashed var(--success); border-radius: 14px; margin-bottom: 20px; }
-        .target-display h4 { color: var(--success); margin-bottom: 8px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
-        .target-state { font-family: 'Courier New', monospace; font-size: 1.3rem; }
+        .target-display { text-align: center; padding: 12px; background: rgba(16, 185, 129, 0.1); border: 2px dashed var(--success); border-radius: 12px; margin-bottom: 18px; }
+        .target-display h4 { color: var(--success); margin-bottom: 6px; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .target-state { font-family: 'Courier New', monospace; font-size: 1.2rem; }
 
-        /* Qubits */
-        .qubits-display { display: flex; justify-content: center; gap: 30px; margin: 25px 0; flex-wrap: wrap; }
-        .qubit {
-            width: 100px; height: 100px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.6rem; font-weight: 700; font-family: 'Courier New', monospace;
-            transition: all 0.3s; cursor: pointer; position: relative;
-        }
-        .qubit.state-0 { background: linear-gradient(135deg, #1e3a5f, #0f172a); border: 3px solid #3b82f6; box-shadow: 0 0 25px rgba(59, 130, 246, 0.3); }
-        .qubit.state-1 { background: linear-gradient(135deg, #5f1e3a, #2a0f17); border: 3px solid #ec4899; box-shadow: 0 0 25px rgba(236, 72, 153, 0.3); }
-        .qubit.state-super { background: linear-gradient(135deg, #3a1e5f, #170f2a); border: 3px solid #a855f7; box-shadow: 0 0 25px rgba(168, 85, 247, 0.3); animation: pulse 1.5s ease-in-out infinite; }
+        .circuit-display { display: flex; flex-direction: column; gap: 8px; margin: 20px 0; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+        .qubit-wire { display: flex; align-items: center; gap: 8px; }
+        .wire-label { width: 35px; font-family: 'Courier New', monospace; font-size: 0.8rem; color: var(--text-dim); }
+        .wire-line { flex: 1; height: 2px; background: var(--text-dim); position: relative; display: flex; align-items: center; justify-content: space-around; }
+        .wire-state { width: 50px; font-family: 'Courier New', monospace; font-size: 0.9rem; text-align: center; }
+        .wire-state.initial { color: var(--text-dim); }
+        .wire-state.current { color: var(--cyan); font-weight: bold; }
+
+        .qubits-display { display: flex; justify-content: center; gap: 25px; margin: 20px 0; flex-wrap: wrap; }
+        .qubit { width: 90px; height: 90px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 700; font-family: 'Courier New', monospace; transition: all 0.3s; cursor: pointer; position: relative; }
+        .qubit.state-0 { background: linear-gradient(135deg, #1e3a5f, #0f172a); border: 3px solid #3b82f6; box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+        .qubit.state-1 { background: linear-gradient(135deg, #5f1e3a, #2a0f17); border: 3px solid #ec4899; box-shadow: 0 0 20px rgba(236, 72, 153, 0.3); }
+        .qubit.state-plus { background: linear-gradient(135deg, #3a1e5f, #170f2a); border: 3px solid #a855f7; box-shadow: 0 0 20px rgba(168, 85, 247, 0.3); animation: pulse 1.5s ease-in-out infinite; }
+        .qubit.state-minus { background: linear-gradient(135deg, #1e5f5f, #0f2a2a); border: 3px solid #22d3ee; box-shadow: 0 0 20px rgba(34, 211, 238, 0.3); animation: pulse 1.5s ease-in-out infinite; }
+        .qubit.state-bell { background: linear-gradient(135deg, #5f4a1e, #2a200f); border: 3px solid #f59e0b; box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); animation: entangle 2s ease-in-out infinite; }
         @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        @keyframes entangle { 0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); } 50% { box-shadow: 0 0 35px rgba(245, 158, 11, 0.6); } }
         .qubit:hover { transform: scale(1.1); }
-        .qubit.selected { box-shadow: 0 0 0 4px var(--accent), 0 0 30px var(--accent-glow); }
-        .qubit-label { position: absolute; bottom: -25px; font-size: 0.8rem; color: var(--text-dim); font-family: sans-serif; }
+        .qubit.selected { box-shadow: 0 0 0 4px var(--accent), 0 0 25px var(--accent-glow); }
+        .qubit.entangled::after { content: '🔗'; position: absolute; top: -8px; right: -8px; font-size: 0.8rem; }
+        .qubit-label { position: absolute; bottom: -22px; font-size: 0.75rem; color: var(--text-dim); font-family: sans-serif; }
+        .qubit-pair { display: flex; gap: 15px; align-items: center; padding: 10px; border: 2px dashed var(--warning); border-radius: 16px; }
 
-        /* Gates */
-        .gates-panel { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 20px 0; }
-        .gate-btn {
-            width: 65px; height: 65px; border-radius: 12px; border: 2px solid var(--accent);
-            background: rgba(99, 102, 241, 0.1); color: var(--text);
-            font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: all 0.2s;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
+        .gates-panel { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin: 18px 0; }
+        .gate-btn { min-width: 58px; height: 58px; border-radius: 10px; border: 2px solid var(--accent); background: rgba(99, 102, 241, 0.1); color: var(--text); font-size: 1rem; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px; }
         .gate-btn:hover { background: rgba(99, 102, 241, 0.3); transform: scale(1.08); }
-        .gate-btn:active { transform: scale(0.95); }
-        .gate-btn.selected { background: var(--accent); box-shadow: 0 0 20px var(--accent-glow); }
-        .gate-btn span { font-size: 0.6rem; margin-top: 2px; opacity: 0.7; }
+        .gate-btn.selected { background: var(--accent); box-shadow: 0 0 18px var(--accent-glow); }
+        .gate-btn span { font-size: 0.55rem; margin-top: 2px; opacity: 0.7; }
+        .gate-btn.two-qubit { border-color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+        .gate-btn.two-qubit:hover { background: rgba(245, 158, 11, 0.3); }
+        .gate-btn.two-qubit.selected { background: var(--warning); }
 
-        /* Actions */
-        .action-buttons { display: flex; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
-        .action-btn { padding: 12px 28px; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
+        .action-buttons { display: flex; justify-content: center; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+        .action-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.2s; border: none; }
         .action-btn.primary { background: linear-gradient(135deg, var(--success), #059669); color: white; }
         .action-btn.secondary { background: var(--bg-dark); color: var(--text); border: 2px solid var(--text-dim); }
         .action-btn:hover { transform: translateY(-2px); }
 
-        /* Modal */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
+        .code-panel { margin-top: 18px; background: var(--bg-code); border-radius: 12px; overflow: hidden; }
+        .code-tabs { display: flex; background: rgba(0,0,0,0.3); }
+        .code-tab { padding: 8px 16px; font-size: 0.75rem; cursor: pointer; color: var(--text-dim); border: none; background: none; transition: all 0.2s; }
+        .code-tab:hover { color: var(--text); }
+        .code-tab.active { color: var(--accent); background: var(--bg-code); }
+        .code-content { padding: 12px; font-family: 'Courier New', monospace; font-size: 0.75rem; line-height: 1.5; max-height: 120px; overflow-y: auto; }
+        .code-content .keyword { color: var(--pink); }
+        .code-content .function { color: var(--cyan); }
+        .code-content .string { color: var(--success); }
+        .code-content .comment { color: var(--text-dim); }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .modal-overlay.show { opacity: 1; pointer-events: all; }
-        .modal { background: var(--bg-card); border-radius: 20px; padding: 35px; text-align: center; max-width: 380px; transform: scale(0.9); transition: transform 0.3s; }
+        .modal { background: var(--bg-card); border-radius: 18px; padding: 30px; text-align: center; max-width: 400px; transform: scale(0.9); transition: transform 0.3s; }
         .modal-overlay.show .modal { transform: scale(1); }
-        .modal-icon { font-size: 3.5rem; margin-bottom: 15px; }
-        .modal h2 { font-size: 1.8rem; margin-bottom: 8px; }
-        .modal p { color: var(--text-dim); margin-bottom: 20px; font-size: 0.95rem; }
-        .modal-stars { font-size: 2.2rem; margin-bottom: 15px; letter-spacing: 5px; }
-        .modal-buttons { display: flex; gap: 12px; justify-content: center; }
+        .modal-icon { font-size: 3rem; margin-bottom: 12px; }
+        .modal h2 { font-size: 1.6rem; margin-bottom: 8px; }
+        .modal p { color: var(--text-dim); margin-bottom: 18px; font-size: 0.9rem; }
+        .modal-stars { font-size: 2rem; margin-bottom: 12px; letter-spacing: 4px; }
+        .modal-buttons { display: flex; gap: 10px; justify-content: center; }
+        .modal-unlock { margin-top: 12px; padding: 10px; background: rgba(99, 102, 241, 0.1); border-radius: 8px; font-size: 0.8rem; color: var(--accent); }
 
-        /* Learn popup */
-        .learn-popup {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--bg-card); border: 2px solid var(--accent); border-radius: 14px;
-            padding: 18px 25px; max-width: 450px; text-align: center; z-index: 100;
-            animation: slideUp 0.4s ease;
-        }
+        .learn-popup { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: var(--bg-card); border: 2px solid var(--accent); border-radius: 12px; padding: 15px 22px; max-width: 420px; text-align: center; z-index: 100; animation: slideUp 0.4s ease; }
         @keyframes slideUp { from { transform: translateX(-50%) translateY(100px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }
-        .learn-popup p { margin-bottom: 12px; line-height: 1.5; }
-        .learn-popup button { background: var(--accent); border: none; color: white; padding: 10px 22px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .learn-popup p { margin-bottom: 10px; line-height: 1.5; font-size: 0.9rem; }
+        .learn-popup button { background: var(--accent); border: none; color: white; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
 
-        /* Sandbox */
-        .sandbox-container { background: var(--bg-card); border-radius: 20px; padding: 25px; max-width: 800px; width: 100%; margin: 15px; }
-        .state-output { padding: 18px; background: rgba(0,0,0,0.3); border-radius: 12px; font-family: 'Courier New', monospace; text-align: center; margin-top: 20px; }
-        .prob-bars { display: flex; gap: 15px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+        .concept-card { background: rgba(99, 102, 241, 0.1); border: 1px solid var(--accent); border-radius: 10px; padding: 12px; margin: 12px 0; text-align: left; }
+        .concept-card h5 { color: var(--accent); font-size: 0.8rem; margin-bottom: 6px; }
+        .concept-card p { font-size: 0.8rem; color: var(--text-dim); line-height: 1.4; }
+        .concept-card code { background: var(--bg-code); padding: 1px 5px; border-radius: 3px; font-size: 0.75rem; }
+
+        .sandbox-container { background: var(--bg-card); border-radius: 18px; padding: 22px; max-width: 850px; width: 100%; margin: 12px; }
+        .state-output { padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px; font-family: 'Courier New', monospace; text-align: center; margin-top: 18px; }
+        .prob-bars { display: flex; gap: 12px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
         .prob-bar { text-align: center; }
-        .prob-fill { width: 45px; height: 80px; background: rgba(255,255,255,0.1); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column-reverse; margin-bottom: 5px; }
+        .prob-fill { width: 40px; height: 70px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden; display: flex; flex-direction: column-reverse; margin-bottom: 4px; }
         .prob-inner { background: linear-gradient(to top, var(--accent), #a855f7); transition: height 0.3s; width: 100%; }
-        .prob-bar span { font-size: 0.75rem; color: var(--text-dim); }
+        .prob-bar span { font-size: 0.65rem; color: var(--text-dim); }
 
-        /* Screens */
-        .screen { display: none; }
-        .screen.active { display: block; }
-        #world-select.active, #level-select.active, #game-screen.active { display: block; }
+        .help-content { text-align: left; max-height: 60vh; overflow-y: auto; }
+        .help-section { margin-bottom: 20px; }
+        .help-section h4 { color: var(--accent); margin-bottom: 8px; font-size: 0.95rem; }
+        .help-section p, .help-section li { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+        .help-section ul { margin-left: 18px; margin-top: 6px; }
+        .gate-ref { display: flex; align-items: center; gap: 10px; padding: 8px; background: rgba(0,0,0,0.2); border-radius: 8px; margin: 6px 0; }
+        .gate-ref-sym { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--accent); border-radius: 6px; font-weight: bold; font-size: 0.9rem; }
+        .gate-ref-sym.two-q { background: var(--warning); }
 
-        /* Responsive */
         @media (max-width: 600px) {
-            #main-menu h1 { font-size: 2.5rem; }
-            .menu-btn { width: 100%; max-width: 280px; }
-            .qubit { width: 80px; height: 80px; font-size: 1.3rem; }
-            .gate-btn { width: 55px; height: 55px; font-size: 1rem; }
-            .stats-bar { padding: 15px 20px; gap: 20px; }
+            #main-menu h1 { font-size: 2.2rem; }
+            .menu-btn { width: 100%; max-width: 260px; }
+            .qubit { width: 70px; height: 70px; font-size: 1.1rem; }
+            .gate-btn { min-width: 50px; height: 50px; font-size: 0.9rem; }
+            .stats-bar { padding: 12px 18px; gap: 18px; }
+            .worlds-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -218,10 +197,10 @@
 
     <div id="main-menu" class="screen">
         <h1>⚛️ Quantum Quest</h1>
-        <p class="subtitle">Master quantum computing through puzzles</p>
+        <p class="subtitle">From Zero to Quantum Hero</p>
         <button class="menu-btn primary" onclick="Game.showWorldSelect()">▶ Play</button>
         <button class="menu-btn secondary" onclick="Game.showSandbox()">🔬 Quantum Lab</button>
-        <button class="menu-btn secondary" onclick="Game.showHelp()">❓ How to Play</button>
+        <button class="menu-btn secondary" onclick="Game.showHelp()">📖 Reference Guide</button>
         <div class="stats-bar">
             <div class="stat"><div class="stat-value" id="total-stars">0</div><div class="stat-label">Stars</div></div>
             <div class="stat"><div class="stat-value" id="levels-done">0</div><div class="stat-label">Levels</div></div>
@@ -231,7 +210,8 @@
 
     <div id="world-select" class="screen">
         <button class="back-btn" onclick="Game.showMenu()">← Back</button>
-        <h2 class="page-title">Select World</h2>
+        <h2 class="page-title">Quantum Curriculum</h2>
+        <p class="page-subtitle">Master quantum computing from fundamentals to algorithms</p>
         <div class="worlds-grid" id="worlds-grid"></div>
     </div>
 
@@ -256,6 +236,7 @@
             <h2>Level Complete!</h2>
             <div class="modal-stars" id="win-stars">⭐⭐⭐</div>
             <p id="win-msg">Perfect solution!</p>
+            <div class="modal-unlock" id="win-unlock" style="display:none"></div>
             <div class="modal-buttons">
                 <button class="action-btn secondary" onclick="Game.retry()">Retry</button>
                 <button class="action-btn primary" onclick="Game.next()">Next →</button>
@@ -276,31 +257,228 @@
     </div>
 
     <div class="modal-overlay" id="help-modal">
-        <div class="modal" style="max-width: 480px; text-align: left;">
-            <div class="modal-icon" style="text-align: center;">🎮</div>
-            <h2 style="text-align: center;">How to Play</h2>
-            <div style="margin: 20px 0; line-height: 1.7;">
-                <p><strong>🎯 Goal:</strong> Transform qubits to match the target state</p><br>
-                <p><strong>🔧 Controls:</strong><br>1. Click a gate button to select it<br>2. Click a qubit to apply the gate</p><br>
-                <p><strong>⭐ Stars:</strong> Fewer moves = more stars!</p><br>
-                <p><strong>📖 Qubit States:</strong></p>
-                <ul style="margin-left: 20px; color: var(--text-dim); margin-top: 5px;">
-                    <li><span style="color: #3b82f6;">|0⟩</span> - Zero state (blue)</li>
-                    <li><span style="color: #ec4899;">|1⟩</span> - One state (pink)</li>
-                    <li><span style="color: #a855f7;">|+⟩ |-⟩</span> - Superposition (purple)</li>
-                </ul><br>
-                <p><strong>🔮 Gates:</strong></p>
-                <ul style="margin-left: 20px; color: var(--text-dim); margin-top: 5px;">
-                    <li><strong>X</strong> - Flips |0⟩↔|1⟩</li>
-                    <li><strong>H</strong> - Creates/removes superposition</li>
-                    <li><strong>Z</strong> - Flips phase |+⟩↔|-⟩</li>
-                </ul>
+        <div class="modal" style="max-width: 550px;">
+            <div class="modal-icon">📖</div>
+            <h2>Quantum Gate Reference</h2>
+            <div class="help-content">
+                <div class="help-section">
+                    <h4>🎯 How to Play</h4>
+                    <p>Select a gate, then click qubit(s) to apply it. Transform qubits from initial to target state in minimum moves.</p>
+                </div>
+                <div class="help-section">
+                    <h4>Single-Qubit Gates</h4>
+                    <div class="gate-ref"><div class="gate-ref-sym">X</div><div><strong>Pauli-X (NOT)</strong><br><span style="color:var(--text-dim)">Flips |0⟩↔|1⟩. Like classical NOT.</span></div></div>
+                    <div class="gate-ref"><div class="gate-ref-sym">H</div><div><strong>Hadamard</strong><br><span style="color:var(--text-dim)">Creates superposition. |0⟩→|+⟩, |1⟩→|−⟩</span></div></div>
+                    <div class="gate-ref"><div class="gate-ref-sym">Z</div><div><strong>Pauli-Z (Phase)</strong><br><span style="color:var(--text-dim)">Flips phase. |+⟩↔|−⟩. No effect on |0⟩,|1⟩</span></div></div>
+                    <div class="gate-ref"><div class="gate-ref-sym">S</div><div><strong>S Gate (√Z)</strong><br><span style="color:var(--text-dim)">Quarter turn. |+⟩→|i⟩, |−⟩→|−i⟩</span></div></div>
+                    <div class="gate-ref"><div class="gate-ref-sym">T</div><div><strong>T Gate (π/8)</strong><br><span style="color:var(--text-dim)">Eighth turn. Key for fault-tolerant QC.</span></div></div>
+                    <div class="gate-ref"><div class="gate-ref-sym">Y</div><div><strong>Pauli-Y</strong><br><span style="color:var(--text-dim)">Combined X and Z with phase. |0⟩→i|1⟩</span></div></div>
+                </div>
+                <div class="help-section">
+                    <h4>Two-Qubit Gates</h4>
+                    <div class="gate-ref"><div class="gate-ref-sym two-q">CX</div><div><strong>CNOT (Controlled-X)</strong><br><span style="color:var(--text-dim)">Flips target if control is |1⟩. Creates entanglement.</span></div></div>
+                    <div class="gate-ref"><div class="gate-ref-sym two-q">CZ</div><div><strong>Controlled-Z</strong><br><span style="color:var(--text-dim)">Applies Z to target if control is |1⟩. Symmetric.</span></div></div>
+                    <div class="gate-ref"><div class="gate-ref-sym two-q">SW</div><div><strong>SWAP</strong><br><span style="color:var(--text-dim)">Exchanges two qubit states.</span></div></div>
+                </div>
+                <div class="help-section">
+                    <h4>Qubit States</h4>
+                    <ul>
+                        <li><span style="color:#3b82f6">|0⟩</span> - Ground state (blue)</li>
+                        <li><span style="color:#ec4899">|1⟩</span> - Excited state (pink)</li>
+                        <li><span style="color:#a855f7">|+⟩</span> - Superposition (|0⟩+|1⟩)/√2</li>
+                        <li><span style="color:#22d3ee">|−⟩</span> - Superposition (|0⟩−|1⟩)/√2</li>
+                        <li><span style="color:#f59e0b">|Φ⁺⟩</span> - Bell state (entangled)</li>
+                    </ul>
+                </div>
             </div>
-            <div style="text-align: center;"><button class="action-btn primary" onclick="Game.hideHelp()">Got it!</button></div>
+            <div style="margin-top:15px"><button class="action-btn primary" onclick="Game.hideHelp()">Got it!</button></div>
         </div>
     </div>
 
 <script>
+const GATES = {
+    'X': { sym: 'X', name: 'NOT', desc: 'Flip qubit', twoQ: false },
+    'H': { sym: 'H', name: 'Hadamard', desc: 'Superposition', twoQ: false },
+    'Z': { sym: 'Z', name: 'Phase', desc: 'Phase flip', twoQ: false },
+    'S': { sym: 'S', name: 'S-Gate', desc: '√Z gate', twoQ: false },
+    'T': { sym: 'T', name: 'T-Gate', desc: 'π/8 gate', twoQ: false },
+    'Y': { sym: 'Y', name: 'Pauli-Y', desc: 'Y rotation', twoQ: false },
+    'CX': { sym: 'CX', name: 'CNOT', desc: 'Ctrl-NOT', twoQ: true },
+    'CZ': { sym: 'CZ', name: 'Ctrl-Z', desc: 'Ctrl-Phase', twoQ: true },
+    'SWAP': { sym: 'SW', name: 'SWAP', desc: 'Swap qubits', twoQ: true }
+};
+
+// Comprehensive quantum states including entangled states
+const STATES = {
+    '0': { display: '|0⟩', css: 'state-0', prob: [1, 0] },
+    '1': { display: '|1⟩', css: 'state-1', prob: [0, 1] },
+    '+': { display: '|+⟩', css: 'state-plus', prob: [0.5, 0.5] },
+    '-': { display: '|−⟩', css: 'state-minus', prob: [0.5, 0.5] },
+    'i': { display: '|i⟩', css: 'state-plus', prob: [0.5, 0.5] },
+    '-i': { display: '|−i⟩', css: 'state-minus', prob: [0.5, 0.5] }
+};
+
+// State transformation tables for single-qubit gates
+const TRANSFORMS = {
+    'X': { '0': '1', '1': '0', '+': '+', '-': '-', 'i': '-i', '-i': 'i' },
+    'H': { '0': '+', '1': '-', '+': '0', '-': '1', 'i': 'i', '-i': '-i' },
+    'Z': { '0': '0', '1': '1', '+': '-', '-': '+', 'i': '-i', '-i': 'i' },
+    'S': { '0': '0', '1': '1', '+': 'i', '-': '-i', 'i': '-', '-i': '+' },
+    'T': { '0': '0', '1': '1', '+': '+', '-': '-', 'i': 'i', '-i': '-i' },
+    'Y': { '0': '1', '1': '0', '+': '-', '-': '+', 'i': '-i', '-i': 'i' }
+};
+
+const WORLDS = [
+    // TIER 1: Fundamentals
+    {
+        id: 'w1', name: 'Qubit Basics', icon: '🌟', tier: 'Fundamentals',
+        desc: 'Learn the NOT gate - the simplest quantum operation',
+        levels: [
+            { instr: 'The <strong>X gate</strong> flips a qubit. Transform <code>|0⟩</code> to <code>|1⟩</code>', init: ['0'], target: ['1'], gates: ['X'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 X is like a NOT gate - it flips the qubit!', code: { qiskit: 'qc.x(0)', cirq: 'cirq.X(q0)', qsharp: 'X(q0);' } },
+            { instr: 'Flip it back! <code>|1⟩</code> → <code>|0⟩</code>', init: ['1'], target: ['0'], gates: ['X'], maxMoves: 2, perfect: 1, good: 1, code: { qiskit: 'qc.x(0)', cirq: 'cirq.X(q0)', qsharp: 'X(q0);' } },
+            { instr: 'Apply X twice. What happens?', init: ['0'], target: ['0'], gates: ['X'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 X·X = I (identity). Gates can cancel!', code: { qiskit: 'qc.x(0)\nqc.x(0)', cirq: 'cirq.X(q0), cirq.X(q0)', qsharp: 'X(q0); X(q0);' } },
+            { instr: 'Two qubits! Flip <strong>both</strong> to |1⟩', init: ['0', '0'], target: ['1', '1'], gates: ['X'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.x(0)\nqc.x(1)', cirq: 'cirq.X(q0), cirq.X(q1)', qsharp: 'X(q0); X(q1);' } },
+            { instr: 'Flip only q1 (second qubit)', init: ['0', '0'], target: ['0', '1'], gates: ['X'], maxMoves: 2, perfect: 1, good: 1, code: { qiskit: 'qc.x(1)', cirq: 'cirq.X(q1)', qsharp: 'X(q1);' } },
+            { instr: 'Swap the pattern: |01⟩ → |10⟩', init: ['0', '1'], target: ['1', '0'], gates: ['X'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.x(0)\nqc.x(1)', cirq: 'cirq.X(q0), cirq.X(q1)', qsharp: 'X(q0); X(q1);' } }
+        ]
+    },
+    {
+        id: 'w2', name: 'Superposition', icon: '🌀', tier: 'Fundamentals',
+        desc: 'Create quantum superposition with the Hadamard gate',
+        levels: [
+            { instr: 'The <strong>H gate</strong> creates superposition. Make <code>|+⟩</code>', init: ['0'], target: ['+'], gates: ['H'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 |+⟩ = (|0⟩+|1⟩)/√2 - the qubit is in BOTH states!', code: { qiskit: 'qc.h(0)', cirq: 'cirq.H(q0)', qsharp: 'H(q0);' } },
+            { instr: 'H on |1⟩ gives |−⟩. Try it!', init: ['1'], target: ['-'], gates: ['H'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 |−⟩ = (|0⟩−|1⟩)/√2 - same probabilities, different phase!', code: { qiskit: 'qc.h(0)', cirq: 'cirq.H(q0)', qsharp: 'H(q0);' } },
+            { instr: 'H is its own inverse! Go back: |+⟩ → |0⟩', init: ['+'], target: ['0'], gates: ['H'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 H·H = I. Applying H twice returns to original state.', code: { qiskit: 'qc.h(0)', cirq: 'cirq.H(q0)', qsharp: 'H(q0);' } },
+            { instr: 'Both qubits in superposition: |++⟩', init: ['0', '0'], target: ['+', '+'], gates: ['H'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 This creates equal superposition of |00⟩,|01⟩,|10⟩,|11⟩', code: { qiskit: 'qc.h(0)\nqc.h(1)', cirq: 'cirq.H(q0), cirq.H(q1)', qsharp: 'H(q0); H(q1);' } },
+            { instr: 'Create |+−⟩ state', init: ['0', '1'], target: ['+', '-'], gates: ['H'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.h(1)', cirq: 'cirq.H(q0), cirq.H(q1)', qsharp: 'H(q0); H(q1);' } },
+            { instr: 'Collapse superposition: |−−⟩ → |11⟩', init: ['-', '-'], target: ['1', '1'], gates: ['H'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.h(1)', cirq: 'cirq.H(q0), cirq.H(q1)', qsharp: 'H(q0); H(q1);' } }
+        ]
+    },
+    {
+        id: 'w3', name: 'Phase Control', icon: '🔮', tier: 'Fundamentals',
+        desc: 'Master the Z gate and quantum phase',
+        levels: [
+            { instr: '<strong>Z gate</strong> flips phase in superposition: |+⟩ → |−⟩', init: ['+'], target: ['-'], gates: ['Z'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 Z adds a phase of -1 to the |1⟩ component', code: { qiskit: 'qc.z(0)', cirq: 'cirq.Z(q0)', qsharp: 'Z(q0);' } },
+            { instr: 'Z on |0⟩ or |1⟩ does nothing visible. Try it.', init: ['0'], target: ['0'], gates: ['Z'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 Z|0⟩=|0⟩, Z|1⟩=-|1⟩ but global phase is unobservable', code: { qiskit: 'qc.z(0)', cirq: 'cirq.Z(q0)', qsharp: 'Z(q0);' } },
+            { instr: 'Phase flip: |−⟩ → |+⟩', init: ['-'], target: ['+'], gates: ['Z'], maxMoves: 2, perfect: 1, good: 1, code: { qiskit: 'qc.z(0)', cirq: 'cirq.Z(q0)', qsharp: 'Z(q0);' } },
+            { instr: 'Z·Z = I. Apply Z twice.', init: ['+'], target: ['+'], gates: ['Z'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 Like X, Z is its own inverse', code: { qiskit: 'qc.z(0)\nqc.z(0)', cirq: 'cirq.Z(q0), cirq.Z(q0)', qsharp: 'Z(q0); Z(q0);' } },
+            { instr: 'Flip phases on both: |++⟩ → |−−⟩', init: ['+', '+'], target: ['-', '-'], gates: ['Z'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.z(0)\nqc.z(1)', cirq: 'cirq.Z(q0), cirq.Z(q1)', qsharp: 'Z(q0); Z(q1);' } },
+            { instr: 'Mixed phases: |+−⟩ → |−+⟩', init: ['+', '-'], target: ['-', '+'], gates: ['Z'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.z(0)\nqc.z(1)', cirq: 'cirq.Z(q0), cirq.Z(q1)', qsharp: 'Z(q0); Z(q1);' } }
+        ]
+    },
+    // TIER 2: Intermediate
+    {
+        id: 'w4', name: 'Gate Combinations', icon: '🎯', tier: 'Intermediate',
+        desc: 'Combine X, H, and Z strategically',
+        levels: [
+            { instr: 'Create |−⟩ from |0⟩ using X and H', init: ['0'], target: ['-'], gates: ['X', 'H'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 X then H, or H then Z? Multiple paths exist!', code: { qiskit: 'qc.x(0)\nqc.h(0)', cirq: 'cirq.X(q0), cirq.H(q0)', qsharp: 'X(q0); H(q0);' } },
+            { instr: 'Get |1⟩ from |+⟩', init: ['+'], target: ['1'], gates: ['X', 'H'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.x(0)', cirq: 'cirq.H(q0), cirq.X(q0)', qsharp: 'H(q0); X(q0);' } },
+            { instr: 'Transform |+1⟩ → |00⟩', init: ['+', '1'], target: ['0', '0'], gates: ['X', 'H'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.x(1)', cirq: 'cirq.H(q0), cirq.X(q1)', qsharp: 'H(q0); X(q1);' } },
+            { instr: 'All three gates! |0⟩ → |−⟩', init: ['0'], target: ['-'], gates: ['X', 'H', 'Z'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 H then Z, or X then H both work!', code: { qiskit: 'qc.h(0)\nqc.z(0)', cirq: 'cirq.H(q0), cirq.Z(q0)', qsharp: 'H(q0); Z(q0);' } },
+            { instr: 'Create |1−⟩ from |00⟩', init: ['0', '0'], target: ['1', '-'], gates: ['X', 'H', 'Z'], maxMoves: 4, perfect: 3, good: 3, code: { qiskit: 'qc.x(0)\nqc.h(1)\nqc.z(1)', cirq: 'cirq.X(q0), cirq.H(q1), cirq.Z(q1)', qsharp: 'X(q0); H(q1); Z(q1);' } },
+            { instr: 'Challenge: |−+⟩ from |10⟩', init: ['1', '0'], target: ['-', '+'], gates: ['X', 'H', 'Z'], maxMoves: 4, perfect: 2, good: 3, code: { qiskit: 'qc.h(0)\nqc.h(1)', cirq: 'cirq.H(q0), cirq.H(q1)', qsharp: 'H(q0); H(q1);' } }
+        ]
+    },
+    {
+        id: 'w5', name: 'CNOT & Entanglement', icon: '🔗', tier: 'Intermediate',
+        desc: 'The CNOT gate - gateway to entanglement',
+        levels: [
+            { instr: '<strong>CNOT</strong>: If control is |1⟩, flip target. Try |10⟩', init: ['1', '0'], target: ['1', '1'], gates: ['CX'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 Click CNOT, then control qubit, then target qubit', code: { qiskit: 'qc.cx(0, 1)', cirq: 'cirq.CNOT(q0, q1)', qsharp: 'CNOT(q0, q1);' } },
+            { instr: 'Control is |0⟩, so target unchanged', init: ['0', '1'], target: ['0', '1'], gates: ['CX'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 CNOT does nothing when control is |0⟩', code: { qiskit: 'qc.cx(0, 1)', cirq: 'cirq.CNOT(q0, q1)', qsharp: 'CNOT(q0, q1);' } },
+            { instr: 'Use CNOT to copy: |10⟩ → |11⟩', init: ['1', '0'], target: ['1', '1'], gates: ['CX'], maxMoves: 2, perfect: 1, good: 1, code: { qiskit: 'qc.cx(0, 1)', cirq: 'cirq.CNOT(q0, q1)', qsharp: 'CNOT(q0, q1);' } },
+            { instr: 'CNOT with superposition creates entanglement!', init: ['+', '0'], target: ['B00'], gates: ['CX'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 |+0⟩ → (|00⟩+|11⟩)/√2 - a Bell state!', code: { qiskit: 'qc.cx(0, 1)', cirq: 'cirq.CNOT(q0, q1)', qsharp: 'CNOT(q0, q1);' } },
+            { instr: 'Reverse direction: control q1, target q0', init: ['0', '1'], target: ['1', '1'], gates: ['CX'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 CNOT can go either direction!', code: { qiskit: 'qc.cx(1, 0)', cirq: 'cirq.CNOT(q1, q0)', qsharp: 'CNOT(q1, q0);' } },
+            { instr: 'Combine: X then CNOT. |00⟩ → |11⟩', init: ['0', '0'], target: ['1', '1'], gates: ['X', 'CX'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.x(0)\nqc.cx(0, 1)', cirq: 'cirq.X(q0), cirq.CNOT(q0, q1)', qsharp: 'X(q0); CNOT(q0, q1);' } }
+        ]
+    },
+    {
+        id: 'w6', name: 'Bell States', icon: '🔔', tier: 'Intermediate',
+        desc: 'Create the four maximally entangled Bell states',
+        levels: [
+            { instr: 'Create |Φ⁺⟩ = (|00⟩+|11⟩)/√2 - the classic Bell state', init: ['0', '0'], target: ['B00'], gates: ['H', 'CX'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 H on first qubit, then CNOT', code: { qiskit: 'qc.h(0)\nqc.cx(0, 1)', cirq: 'cirq.H(q0), cirq.CNOT(q0, q1)', qsharp: 'H(q0); CNOT(q0, q1);' } },
+            { instr: 'Create |Φ⁻⟩ = (|00⟩−|11⟩)/√2', init: ['0', '0'], target: ['B01'], gates: ['H', 'Z', 'CX'], maxMoves: 4, perfect: 3, good: 3, hint: '💡 Add a Z gate to flip the phase', code: { qiskit: 'qc.h(0)\nqc.z(0)\nqc.cx(0, 1)', cirq: 'cirq.H(q0), cirq.Z(q0), cirq.CNOT(q0, q1)', qsharp: 'H(q0); Z(q0); CNOT(q0, q1);' } },
+            { instr: 'Create |Ψ⁺⟩ = (|01⟩+|10⟩)/√2', init: ['0', '0'], target: ['B10'], gates: ['X', 'H', 'CX'], maxMoves: 4, perfect: 3, good: 3, hint: '💡 X on one qubit changes which states are entangled', code: { qiskit: 'qc.h(0)\nqc.cx(0, 1)\nqc.x(1)', cirq: 'cirq.H(q0), cirq.CNOT(q0, q1), cirq.X(q1)', qsharp: 'H(q0); CNOT(q0, q1); X(q1);' } },
+            { instr: 'Create |Ψ⁻⟩ = (|01⟩−|10⟩)/√2 - the singlet state', init: ['0', '0'], target: ['B11'], gates: ['X', 'H', 'Z', 'CX'], maxMoves: 5, perfect: 4, good: 4, hint: '💡 Combine X and Z with the Bell circuit', code: { qiskit: 'qc.h(0)\nqc.z(0)\nqc.cx(0, 1)\nqc.x(1)', cirq: 'cirq.H(q0), cirq.Z(q0), cirq.CNOT(q0, q1), cirq.X(q1)', qsharp: 'H(q0); Z(q0); CNOT(q0, q1); X(q1);' } },
+            { instr: 'Bell measurement: Unentangle |Φ⁺⟩ back to |00⟩', init: ['B00'], target: ['0', '0'], gates: ['H', 'CX'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 Reverse the creation: CNOT then H', code: { qiskit: 'qc.cx(0, 1)\nqc.h(0)', cirq: 'cirq.CNOT(q0, q1), cirq.H(q0)', qsharp: 'CNOT(q0, q1); H(q0);' } },
+            { instr: 'Identify: Unentangle |Ψ⁺⟩ to see its signature |01⟩', init: ['B10'], target: ['0', '1'], gates: ['X', 'H', 'CX'], maxMoves: 4, perfect: 3, good: 3, code: { qiskit: 'qc.cx(0, 1)\nqc.h(0)', cirq: 'cirq.CNOT(q0, q1), cirq.H(q0)', qsharp: 'CNOT(q0, q1); H(q0);' } }
+        ]
+    },
+    // TIER 3: Advanced
+    {
+        id: 'w7', name: 'Multi-Gate Mastery', icon: '⚡', tier: 'Advanced',
+        desc: 'SWAP, CZ, and complex gate sequences',
+        levels: [
+            { instr: '<strong>SWAP</strong> exchanges two qubits: |01⟩ → |10⟩', init: ['0', '1'], target: ['1', '0'], gates: ['SWAP'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 SWAP is symmetric - order doesn\'t matter', code: { qiskit: 'qc.swap(0, 1)', cirq: 'cirq.SWAP(q0, q1)', qsharp: 'SWAP(q0, q1);' } },
+            { instr: 'SWAP = 3 CNOTs. Try: |10⟩ → |01⟩', init: ['1', '0'], target: ['0', '1'], gates: ['CX'], maxMoves: 4, perfect: 3, good: 3, hint: '💡 CNOT(0,1), CNOT(1,0), CNOT(0,1)', code: { qiskit: 'qc.cx(0,1)\nqc.cx(1,0)\nqc.cx(0,1)', cirq: 'cirq.CNOT(q0,q1), cirq.CNOT(q1,q0), cirq.CNOT(q0,q1)', qsharp: 'CNOT(q0,q1); CNOT(q1,q0); CNOT(q0,q1);' } },
+            { instr: '<strong>CZ</strong>: Phase flip if both are |1⟩. |++⟩ → entangled', init: ['+', '+'], target: ['B00'], gates: ['CZ', 'H'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 CZ followed by H gives Bell state', code: { qiskit: 'qc.cz(0, 1)\nqc.h(1)', cirq: 'cirq.CZ(q0, q1), cirq.H(q1)', qsharp: 'CZ(q0, q1); H(q1);' } },
+            { instr: 'CZ is symmetric: try both directions', init: ['+', '+'], target: ['-', '-'], gates: ['CZ'], maxMoves: 2, perfect: 1, good: 1, code: { qiskit: 'qc.cz(0, 1)', cirq: 'cirq.CZ(q0, q1)', qsharp: 'CZ(q0, q1);' } },
+            { instr: 'Chain: H → CZ → H creates CNOT-like behavior', init: ['0', '0'], target: ['0', '0'], gates: ['H', 'CZ'], maxMoves: 5, perfect: 4, good: 4, hint: '💡 HCZ H = CNOT (up to phase)', code: { qiskit: 'qc.h(1)\nqc.cz(0,1)\nqc.h(1)', cirq: 'cirq.H(q1), cirq.CZ(q0,q1), cirq.H(q1)', qsharp: 'H(q1); CZ(q0,q1); H(q1);' } },
+            { instr: 'Complex state: |−1⟩ from |+0⟩', init: ['+', '0'], target: ['-', '1'], gates: ['X', 'H', 'Z', 'CX'], maxMoves: 4, perfect: 3, good: 3, code: { qiskit: 'qc.z(0)\nqc.x(1)', cirq: 'cirq.Z(q0), cirq.X(q1)', qsharp: 'Z(q0); X(q1);' } }
+        ]
+    },
+    {
+        id: 'w8', name: 'Deutsch Algorithm', icon: '🔍', tier: 'Advanced',
+        desc: 'Your first quantum algorithm - quantum parallelism',
+        levels: [
+            { instr: 'Setup: Create |+−⟩ for Deutsch algorithm', init: ['0', '1'], target: ['+', '-'], gates: ['H'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 H on both qubits gives the initial state', code: { qiskit: 'qc.h(0)\nqc.h(1)', cirq: 'cirq.H(q0), cirq.H(q1)', qsharp: 'H(q0); H(q1);' } },
+            { instr: 'Constant f(x)=0: Oracle does nothing. Result?', init: ['+', '-'], target: ['+', '-'], gates: ['X', 'CX'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 Identity oracle - input unchanged', code: { qiskit: '# No oracle needed', cirq: '# Identity', qsharp: '// Identity' } },
+            { instr: 'Constant f(x)=1: Oracle flips target', init: ['+', '-'], target: ['+', '-'], gates: ['X', 'CX'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 X on target gives same result (global phase)', code: { qiskit: 'qc.x(1)', cirq: 'cirq.X(q1)', qsharp: 'X(q1);' } },
+            { instr: 'Balanced f(x)=x: CNOT oracle. Watch the phase kickback!', init: ['+', '-'], target: ['-', '-'], gates: ['CX'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 Phase kickback changes |+⟩ to |−⟩!', code: { qiskit: 'qc.cx(0, 1)', cirq: 'cirq.CNOT(q0, q1)', qsharp: 'CNOT(q0, q1);' } },
+            { instr: 'Full Deutsch: |01⟩ through balanced oracle to |1−⟩', init: ['0', '1'], target: ['1', '-'], gates: ['H', 'CX'], maxMoves: 5, perfect: 4, good: 4, hint: '💡 H → Oracle → H on first qubit', code: { qiskit: 'qc.h(0)\nqc.h(1)\nqc.cx(0,1)\nqc.h(0)', cirq: 'cirq.H(q0), cirq.H(q1), cirq.CNOT(q0,q1), cirq.H(q0)', qsharp: 'H(q0); H(q1); CNOT(q0,q1); H(q0);' } },
+            { instr: 'Measurement reveals: balanced→|1⟩, constant→|0⟩', init: ['0', '1'], target: ['0', '-'], gates: ['H', 'CX'], maxMoves: 5, perfect: 4, good: 4, hint: '💡 This is constant oracle case', code: { qiskit: 'qc.h(0)\nqc.h(1)\nqc.h(0)', cirq: 'cirq.H(q0), cirq.H(q1), cirq.H(q0)', qsharp: 'H(q0); H(q1); H(q0);' } }
+        ]
+    },
+    {
+        id: 'w9', name: 'Grover Basics', icon: '🔎', tier: 'Advanced',
+        desc: 'Quantum search - find the needle in the haystack',
+        levels: [
+            { instr: 'Uniform superposition: Starting state for Grover', init: ['0', '0'], target: ['+', '+'], gates: ['H'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 All 4 states have equal amplitude 1/2', code: { qiskit: 'qc.h(0)\nqc.h(1)', cirq: 'cirq.H(q0), cirq.H(q1)', qsharp: 'H(q0); H(q1);' } },
+            { instr: 'Oracle for |11⟩: Mark it with phase flip', init: ['+', '+'], target: ['G11'], gates: ['CZ'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 CZ flips phase only when both qubits are |1⟩', code: { qiskit: 'qc.cz(0, 1)', cirq: 'cirq.CZ(q0, q1)', qsharp: 'CZ(q0, q1);' } },
+            { instr: 'Diffusion operator start: |++⟩ → |00⟩', init: ['+', '+'], target: ['0', '0'], gates: ['H'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.h(1)', cirq: 'cirq.H(q0), cirq.H(q1)', qsharp: 'H(q0); H(q1);' } },
+            { instr: 'Full diffusion: Reflect about mean', init: ['0', '0'], target: ['+', '+'], gates: ['H', 'X', 'CZ'], maxMoves: 7, perfect: 6, good: 6, hint: '💡 X gates, CZ, X gates, H gates', code: { qiskit: 'qc.h([0,1])\nqc.x([0,1])\nqc.cz(0,1)\nqc.x([0,1])\nqc.h([0,1])', cirq: '...', qsharp: '...' } },
+            { instr: 'One Grover iteration amplifies |11⟩', init: ['0', '0'], target: ['1', '1'], gates: ['H', 'X', 'CZ'], maxMoves: 10, perfect: 8, good: 9, hint: '💡 For 2 qubits, 1 iteration gives perfect answer', code: { qiskit: '# Full Grover circuit', cirq: '# Full Grover circuit', qsharp: '// Full Grover circuit' } },
+            { instr: 'Search for |01⟩ instead', init: ['0', '0'], target: ['0', '1'], gates: ['H', 'X', 'CZ'], maxMoves: 10, perfect: 8, good: 9, hint: '💡 Modify oracle to mark |01⟩', code: { qiskit: '# Modified oracle', cirq: '# Modified oracle', qsharp: '// Modified oracle' } }
+        ]
+    },
+    // TIER 4: Expert
+    {
+        id: 'w10', name: 'Quantum Teleportation', icon: '📡', tier: 'Expert',
+        desc: 'Teleport quantum states using entanglement',
+        levels: [
+            { instr: 'Step 1: Create Bell pair for Alice & Bob', init: ['0', '0'], target: ['B00'], gates: ['H', 'CX'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 Standard Bell state preparation', code: { qiskit: 'qc.h(0)\nqc.cx(0, 1)', cirq: 'cirq.H(q0), cirq.CNOT(q0, q1)', qsharp: 'H(q0); CNOT(q0, q1);' } },
+            { instr: 'Step 2: Alice entangles her qubit with message', init: ['+', '0'], target: ['B00'], gates: ['CX', 'H'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 CNOT then H on message qubit', code: { qiskit: 'qc.cx(0, 1)\nqc.h(0)', cirq: 'cirq.CNOT(q0, q1), cirq.H(q0)', qsharp: 'CNOT(q0, q1); H(q0);' } },
+            { instr: 'Bell measurement decodes to classical bits', init: ['B00'], target: ['0', '0'], gates: ['CX', 'H'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.cx(0, 1)\nqc.h(0)', cirq: 'cirq.CNOT(q0, q1), cirq.H(q0)', qsharp: 'CNOT(q0, q1); H(q0);' } },
+            { instr: 'Bob\'s correction: Apply X if needed', init: ['0', '1'], target: ['0', '0'], gates: ['X', 'Z'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 X corrects bit flip from measurement', code: { qiskit: 'qc.x(1)', cirq: 'cirq.X(q1)', qsharp: 'X(q1);' } },
+            { instr: 'Bob\'s correction: Apply Z if needed', init: ['0', '-'], target: ['0', '+'], gates: ['X', 'Z'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 Z corrects phase flip', code: { qiskit: 'qc.z(1)', cirq: 'cirq.Z(q1)', qsharp: 'Z(q1);' } },
+            { instr: 'Full teleport: |+⟩ through the protocol', init: ['+', '0', '0'], target: ['0', '0', '+'], gates: ['H', 'X', 'Z', 'CX'], maxMoves: 8, perfect: 6, good: 7, hint: '💡 Bell pair, entangle message, measure, correct', code: { qiskit: '# Full teleportation', cirq: '# Full teleportation', qsharp: '// Full teleportation' } }
+        ]
+    },
+    {
+        id: 'w11', name: 'Advanced Phases', icon: '🎭', tier: 'Expert',
+        desc: 'S, T gates and precise phase control',
+        levels: [
+            { instr: '<strong>S gate</strong> is √Z: |+⟩ → |i⟩', init: ['+'], target: ['i'], gates: ['S'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 S adds π/2 phase to |1⟩ component', code: { qiskit: 'qc.s(0)', cirq: 'cirq.S(q0)', qsharp: 'S(q0);' } },
+            { instr: 'S·S = Z. Verify!', init: ['+'], target: ['-'], gates: ['S'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.s(0)\nqc.s(0)', cirq: 'cirq.S(q0), cirq.S(q0)', qsharp: 'S(q0); S(q0);' } },
+            { instr: '<strong>T gate</strong> for fault tolerance', init: ['+'], target: ['+'], gates: ['T'], maxMoves: 2, perfect: 1, good: 1, hint: '💡 T adds π/4 phase. T⁸ = I', code: { qiskit: 'qc.t(0)', cirq: 'cirq.T(q0)', qsharp: 'T(q0);' } },
+            { instr: 'Build √Z from S: Show S|+⟩', init: ['0'], target: ['i'], gates: ['H', 'S'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.s(0)', cirq: 'cirq.H(q0), cirq.S(q0)', qsharp: 'H(q0); S(q0);' } },
+            { instr: 'Phase estimation prep: Create specific phase', init: ['0', '0'], target: ['+', 'i'], gates: ['H', 'S'], maxMoves: 4, perfect: 3, good: 3, code: { qiskit: 'qc.h(0)\nqc.h(1)\nqc.s(1)', cirq: 'cirq.H(q0), cirq.H(q1), cirq.S(q1)', qsharp: 'H(q0); H(q1); S(q1);' } },
+            { instr: 'T-gate magic: Essential for universality', init: ['0'], target: ['+'], gates: ['H', 'T'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 T gates make quantum computing universal', code: { qiskit: 'qc.h(0)\nqc.t(0)\nqc.t(0)\nqc.t(0)\nqc.t(0)', cirq: '...', qsharp: '...' } }
+        ]
+    },
+    {
+        id: 'w12', name: 'Quantum Expert', icon: '👑', tier: 'Expert',
+        desc: 'Master-level challenges for quantum experts',
+        levels: [
+            { instr: 'GHZ prep with 2 qubits: Maximize entanglement', init: ['0', '0'], target: ['B00'], gates: ['H', 'CX', 'X', 'Z'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.cx(0,1)', cirq: '...', qsharp: '...' } },
+            { instr: 'Minimum gates: |00⟩ → |Ψ⁻⟩', init: ['0', '0'], target: ['B11'], gates: ['H', 'X', 'Z', 'CX'], maxMoves: 5, perfect: 4, good: 4, code: { qiskit: '...', cirq: '...', qsharp: '...' } },
+            { instr: 'Decode and re-encode: |Φ⁺⟩ → |00⟩ → |Ψ⁺⟩', init: ['B00'], target: ['B10'], gates: ['H', 'X', 'CX'], maxMoves: 6, perfect: 4, good: 5, code: { qiskit: '...', cirq: '...', qsharp: '...' } },
+            { instr: 'Superdense coding prep', init: ['0', '0'], target: ['B00'], gates: ['H', 'CX'], maxMoves: 3, perfect: 2, good: 2, code: { qiskit: 'qc.h(0)\nqc.cx(0,1)', cirq: '...', qsharp: '...' } },
+            { instr: 'The quantum swap test idea', init: ['+', '0'], target: ['0', '+'], gates: ['H', 'CX', 'SWAP'], maxMoves: 4, perfect: 2, good: 3, code: { qiskit: '...', cirq: '...', qsharp: '...' } },
+            { instr: '🏆 Ultimate: Complex state engineering', init: ['1', '-'], target: ['-', '+'], gates: ['H', 'X', 'Z', 'CX', 'CZ'], maxMoves: 6, perfect: 4, good: 5, code: { qiskit: '...', cirq: '...', qsharp: '...' } }
+        ]
+    }
+];
+
 const Game = {
     data: null,
     world: null,
@@ -310,11 +488,10 @@ const Game = {
     qubits: [],
     target: [],
     gate: null,
-    initialized: false,
+    twoQFirst: null,
+    codeTab: 'qiskit',
 
     init() {
-        if (this.initialized) return;
-        this.initialized = true;
         this.load();
         this.updateStats();
         document.getElementById('loading').classList.add('hidden');
@@ -323,7 +500,7 @@ const Game = {
 
     load() {
         try {
-            const s = localStorage.getItem('qq_save');
+            const s = localStorage.getItem('qq2_save');
             this.data = s ? JSON.parse(s) : { done: {}, stars: {}, unlocked: ['w1'] };
         } catch (e) {
             this.data = { done: {}, stars: {}, unlocked: ['w1'] };
@@ -331,24 +508,20 @@ const Game = {
     },
 
     save() {
-        try {
-            localStorage.setItem('qq_save', JSON.stringify(this.data));
-        } catch (e) {}
+        try { localStorage.setItem('qq2_save', JSON.stringify(this.data)); } catch (e) {}
     },
 
     updateStats() {
-        if (!this.data) this.load();
         let stars = 0, levels = 0;
         Object.values(this.data.stars || {}).forEach(s => { stars += s; levels++; });
         document.getElementById('total-stars').textContent = stars;
         document.getElementById('levels-done').textContent = levels;
-        document.getElementById('worlds-done').textContent = Math.max(0, (this.data.unlocked || ['w1']).length - 1);
+        document.getElementById('worlds-done').textContent = Math.max(0, (this.data.unlocked || []).length - 1);
     },
 
     show(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        const el = document.getElementById(id);
-        if (el) el.classList.add('active');
+        document.getElementById(id)?.classList.add('active');
     },
 
     showMenu() { this.show('main-menu'); this.updateStats(); },
@@ -359,9 +532,16 @@ const Game = {
         if (!this.data) this.load();
         this.show('world-select');
         const g = document.getElementById('worlds-grid');
-        if (!g) return;
         g.innerHTML = '';
+        let lastTier = '';
         WORLDS.forEach(w => {
+            if (w.tier !== lastTier) {
+                lastTier = w.tier;
+                const tierDiv = document.createElement('div');
+                tierDiv.style.cssText = 'grid-column: 1/-1; padding: 10px 0 5px; font-size: 0.9rem; color: var(--accent); font-weight: 600; border-bottom: 1px solid rgba(99,102,241,0.3); margin-top: 10px;';
+                tierDiv.textContent = `📚 ${w.tier}`;
+                g.appendChild(tierDiv);
+            }
             const unlocked = this.data.unlocked.includes(w.id);
             const stars = this.worldStars(w.id);
             const max = w.levels.length * 3;
@@ -369,6 +549,7 @@ const Game = {
             const card = document.createElement('div');
             card.className = 'world-card' + (unlocked ? '' : ' locked');
             card.innerHTML = `
+                <div class="world-tier">${w.tier}</div>
                 <div class="world-icon">${w.icon}</div>
                 <h3>${w.name}</h3>
                 <p>${w.desc}</p>
@@ -389,7 +570,7 @@ const Game = {
 
     showLevels(wid) {
         this.world = WORLDS.find(w => w.id === wid);
-        document.getElementById('world-title').textContent = this.world.name;
+        document.getElementById('world-title').textContent = this.world.icon + ' ' + this.world.name;
         document.getElementById('world-desc').textContent = this.world.desc;
         this.show('level-select');
         const g = document.getElementById('levels-grid');
@@ -415,6 +596,7 @@ const Game = {
         this.qubits = lvl.init.slice();
         this.target = lvl.target.slice();
         this.gate = null;
+        this.twoQFirst = null;
         document.getElementById('level-title').textContent = `${this.world.name} - Level ${idx + 1}`;
         document.getElementById('move-count').textContent = '0';
         document.getElementById('move-max').textContent = this.maxMoves;
@@ -425,63 +607,203 @@ const Game = {
 
     render() {
         const lvl = this.world.levels[this.levelIdx];
+        const targetDisplay = this.target.map((s, i) => {
+            if (s.startsWith('B')) return this.bellDisplay(s);
+            if (s.startsWith('G')) return `|${s.slice(1)}⟩`;
+            return `q${i}: ${this.stateDisplay(s)}`;
+        }).join(' ');
+
+        let codeHtml = '';
+        if (lvl.code) {
+            codeHtml = `
+                <div class="code-panel">
+                    <div class="code-tabs">
+                        <button class="code-tab ${this.codeTab==='qiskit'?'active':''}" onclick="Game.setCodeTab('qiskit')">Qiskit</button>
+                        <button class="code-tab ${this.codeTab==='cirq'?'active':''}" onclick="Game.setCodeTab('cirq')">Cirq</button>
+                        <button class="code-tab ${this.codeTab==='qsharp'?'active':''}" onclick="Game.setCodeTab('qsharp')">Q#</button>
+                    </div>
+                    <div class="code-content"><pre>${this.formatCode(lvl.code[this.codeTab] || '# Code here')}</pre></div>
+                </div>
+            `;
+        }
+
         document.getElementById('game-main').innerHTML = `
             <div class="puzzle-container">
                 <div class="puzzle-instruction">${lvl.instr}</div>
                 <div class="target-display">
                     <h4>🎯 Target</h4>
-                    <div class="target-state">${this.target.map((s,i) => `q${i}: ${this.sym(s)}`).join(' ')}</div>
+                    <div class="target-state">${targetDisplay}</div>
                 </div>
-                <div class="qubits-display">${this.qubits.map((q,i) => `
-                    <div class="qubit state-${this.cls(q)}" id="q${i}" onclick="Game.apply(${i})">
-                        ${this.sym(q)}<div class="qubit-label">q${i}</div>
-                    </div>
-                `).join('')}</div>
+                <div class="qubits-display">${this.renderQubits()}</div>
                 <div class="gates-panel">${lvl.gates.map(g => `
-                    <button class="gate-btn" id="g-${g}" onclick="Game.selectGate('${g}')">${GATES[g].sym}<span>${GATES[g].name}</span></button>
+                    <button class="gate-btn ${GATES[g].twoQ ? 'two-qubit' : ''}" id="g-${g}" onclick="Game.selectGate('${g}')">${GATES[g].sym}<span>${GATES[g].name}</span></button>
                 `).join('')}</div>
                 <div class="action-buttons">
                     <button class="action-btn secondary" onclick="Game.reset()">↺ Reset</button>
                     <button class="action-btn primary" onclick="Game.check()">✓ Check</button>
                 </div>
+                ${codeHtml}
             </div>
         `;
     },
 
-    cls(s) { return s === '0' ? '0' : s === '1' ? '1' : 'super'; },
-    sym(s) { return { '0': '|0⟩', '1': '|1⟩', '+': '|+⟩', '-': '|-⟩' }[s] || s; },
+    renderQubits() {
+        if (this.isEntangled()) {
+            return `<div class="qubit-pair">${this.qubits.map((q, i) => this.qubitHtml(q, i, true)).join('')}</div>`;
+        }
+        return this.qubits.map((q, i) => this.qubitHtml(q, i, false)).join('');
+    },
+
+    qubitHtml(state, idx, entangled) {
+        const isBell = state.startsWith('B');
+        const css = isBell ? 'state-bell' : (STATES[state]?.css || 'state-0');
+        const display = isBell ? this.bellDisplay(state) : this.stateDisplay(state);
+        const entClass = entangled ? ' entangled' : '';
+        return `<div class="qubit ${css}${entClass}" id="q${idx}" onclick="Game.applyTo(${idx})">${display}<div class="qubit-label">q${idx}</div></div>`;
+    },
+
+    stateDisplay(s) { return STATES[s]?.display || `|${s}⟩`; },
+    bellDisplay(b) {
+        const names = { 'B00': '|Φ⁺⟩', 'B01': '|Φ⁻⟩', 'B10': '|Ψ⁺⟩', 'B11': '|Ψ⁻⟩' };
+        return names[b] || b;
+    },
+
+    isEntangled() {
+        return this.qubits.some(q => q.startsWith('B'));
+    },
+
+    setCodeTab(tab) {
+        this.codeTab = tab;
+        this.render();
+    },
+
+    formatCode(code) {
+        return code
+            .replace(/\b(from|import|def|return|if|else|for|in)\b/g, '<span class="keyword">$1</span>')
+            .replace(/\b(qc|circuit|cirq|qiskit)\b/g, '<span class="function">$1</span>')
+            .replace(/#.*/g, '<span class="comment">$&</span>')
+            .replace(/\/\/.*/g, '<span class="comment">$&</span>');
+    },
 
     selectGate(g) {
         document.querySelectorAll('.gate-btn').forEach(b => b.classList.remove('selected'));
-        this.gate = this.gate === g ? null : g;
-        if (this.gate) document.getElementById(`g-${g}`)?.classList.add('selected');
+        if (this.gate === g) {
+            this.gate = null;
+            this.twoQFirst = null;
+        } else {
+            this.gate = g;
+            this.twoQFirst = null;
+            document.getElementById(`g-${g}`)?.classList.add('selected');
+        }
     },
 
-    apply(i) {
+    applyTo(idx) {
         if (!this.gate || this.moves >= this.maxMoves) return;
-        this.qubits[i] = this.transform(this.gate, this.qubits[i]);
+
+        const gateInfo = GATES[this.gate];
+
+        if (gateInfo.twoQ) {
+            if (this.twoQFirst === null) {
+                this.twoQFirst = idx;
+                document.getElementById(`q${idx}`)?.classList.add('selected');
+                return;
+            } else {
+                if (this.twoQFirst === idx) {
+                    document.getElementById(`q${idx}`)?.classList.remove('selected');
+                    this.twoQFirst = null;
+                    return;
+                }
+                this.applyTwoQubit(this.gate, this.twoQFirst, idx);
+                document.getElementById(`q${this.twoQFirst}`)?.classList.remove('selected');
+                this.twoQFirst = null;
+            }
+        } else {
+            this.applySingleQubit(this.gate, idx);
+        }
+
         this.moves++;
         document.getElementById('move-count').textContent = this.moves;
         this.gate = null;
         document.querySelectorAll('.gate-btn').forEach(b => b.classList.remove('selected'));
-        this.updateQubits();
+        this.render();
+
         if (this.moves >= this.maxMoves) setTimeout(() => this.check(), 300);
     },
 
-    transform(g, s) {
-        const T = {
-            'X': { '0': '1', '1': '0', '+': '+', '-': '-' },
-            'H': { '0': '+', '1': '-', '+': '0', '-': '1' },
-            'Z': { '0': '0', '1': '1', '+': '-', '-': '+' }
-        };
-        return T[g]?.[s] || s;
+    applySingleQubit(gate, idx) {
+        const state = this.qubits[idx];
+        if (state.startsWith('B')) {
+            // Applying single qubit gate to entangled state - simplified
+            this.qubits[idx] = this.transformBell(gate, state, idx);
+        } else {
+            this.qubits[idx] = TRANSFORMS[gate]?.[state] || state;
+        }
     },
 
-    updateQubits() {
-        this.qubits.forEach((q, i) => {
-            const el = document.getElementById(`q${i}`);
-            if (el) { el.className = `qubit state-${this.cls(q)}`; el.childNodes[0].textContent = this.sym(q); }
-        });
+    transformBell(gate, bell, idx) {
+        // Simplified Bell state transformations
+        if (gate === 'X' && idx === 1) {
+            const map = { 'B00': 'B10', 'B01': 'B11', 'B10': 'B00', 'B11': 'B01' };
+            return map[bell] || bell;
+        }
+        if (gate === 'Z' && idx === 0) {
+            const map = { 'B00': 'B01', 'B01': 'B00', 'B10': 'B11', 'B11': 'B10' };
+            return map[bell] || bell;
+        }
+        return bell;
+    },
+
+    applyTwoQubit(gate, ctrl, tgt) {
+        if (this.qubits.length < 2) return;
+
+        const s0 = this.qubits[0];
+        const s1 = this.qubits[1];
+
+        // Handle Bell state outputs
+        if (gate === 'CX') {
+            // Creating entanglement from superposition
+            if ((s0 === '+' || s0 === '-') && (s1 === '0' || s1 === '1')) {
+                if (ctrl === 0) {
+                    this.qubits = [s0 === '+' ? 'B00' : 'B01'];
+                    return;
+                }
+            }
+            if ((s1 === '+' || s1 === '-') && (s0 === '0' || s0 === '1')) {
+                if (ctrl === 1) {
+                    this.qubits = [s1 === '+' ? 'B00' : 'B01'];
+                    return;
+                }
+            }
+            // Unentangling Bell states
+            if (s0.startsWith('B')) {
+                const bellMap = { 'B00': ['0', '0'], 'B01': ['0', '0'], 'B10': ['0', '1'], 'B11': ['0', '1'] };
+                this.qubits = bellMap[s0] || ['0', '0'];
+                return;
+            }
+            // Normal CNOT
+            if (ctrl === 0 && s0 === '1') {
+                this.qubits[1] = TRANSFORMS['X'][s1] || s1;
+            } else if (ctrl === 1 && s1 === '1') {
+                this.qubits[0] = TRANSFORMS['X'][s0] || s0;
+            }
+        }
+
+        if (gate === 'CZ') {
+            // CZ creates entanglement from |++⟩
+            if (s0 === '+' && s1 === '+') {
+                this.qubits = ['B00'];
+                return;
+            }
+            // CZ on ++ with different phases
+            if ((s0 === '+' || s0 === '-') && (s1 === '+' || s1 === '-')) {
+                this.qubits[0] = s0 === '+' ? '-' : '+';
+                this.qubits[1] = s1 === '+' ? '-' : '+';
+            }
+        }
+
+        if (gate === 'SWAP') {
+            [this.qubits[0], this.qubits[1]] = [this.qubits[1], this.qubits[0]];
+        }
     },
 
     reset() {
@@ -489,14 +811,28 @@ const Game = {
         this.qubits = lvl.init.slice();
         this.moves = 0;
         this.gate = null;
+        this.twoQFirst = null;
         document.getElementById('move-count').textContent = '0';
-        document.querySelectorAll('.gate-btn').forEach(b => b.classList.remove('selected'));
-        this.updateQubits();
+        this.render();
     },
 
     check() {
-        const win = this.qubits.every((q, i) => q === this.target[i]);
-        if (win) this.win(); else if (this.moves >= this.maxMoves) this.fail();
+        let win = false;
+        if (this.qubits.length === this.target.length) {
+            win = this.qubits.every((q, i) => q === this.target[i]);
+        } else if (this.target.length === 1 && this.target[0].startsWith('B')) {
+            win = this.qubits[0] === this.target[0];
+        } else if (this.target.length === 1 && this.target[0].startsWith('G')) {
+            win = this.checkGrover();
+        }
+
+        if (win) this.win();
+        else if (this.moves >= this.maxMoves) this.fail();
+    },
+
+    checkGrover() {
+        // Simplified Grover check
+        return this.qubits.join('') === this.target[0].slice(1);
     },
 
     win() {
@@ -505,31 +841,58 @@ const Game = {
         let stars = this.moves <= lvl.perfect ? 3 : this.moves <= lvl.good ? 2 : 1;
         this.data.done[key] = true;
         this.data.stars[key] = Math.max(this.data.stars[key] || 0, stars);
+
         // Unlock next world
         const completed = this.world.levels.filter((_, i) => this.data.done[`${this.world.id}-${i}`]).length;
+        let unlockMsg = '';
         if (completed >= this.world.levels.length) {
             const idx = WORLDS.findIndex(w => w.id === this.world.id);
             if (idx < WORLDS.length - 1 && !this.data.unlocked.includes(WORLDS[idx + 1].id)) {
                 this.data.unlocked.push(WORLDS[idx + 1].id);
+                unlockMsg = `🔓 Unlocked: ${WORLDS[idx + 1].name}`;
             }
         }
         this.save();
+
         document.getElementById('win-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-        document.getElementById('win-msg').textContent = stars === 3 ? 'Perfect! 🎯' : stars === 2 ? 'Great job!' : 'Solved! Try fewer moves.';
+        document.getElementById('win-msg').textContent = stars === 3 ? 'Perfect! 🎯' : stars === 2 ? 'Great job!' : 'Solved!';
+        const unlockEl = document.getElementById('win-unlock');
+        if (unlockMsg) {
+            unlockEl.textContent = unlockMsg;
+            unlockEl.style.display = 'block';
+        } else {
+            unlockEl.style.display = 'none';
+        }
         document.getElementById('win-modal').classList.add('show');
     },
 
     fail() { document.getElementById('fail-modal').classList.add('show'); },
-    retry() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); this.start(this.levelIdx); },
-    next() { document.getElementById('win-modal').classList.remove('show'); this.levelIdx < this.world.levels.length - 1 ? this.start(this.levelIdx + 1) : this.showLevels(this.world.id); },
-    quit() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show')); this.showLevels(this.world.id); },
+
+    retry() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+        this.start(this.levelIdx);
+    },
+
+    next() {
+        document.getElementById('win-modal').classList.remove('show');
+        if (this.levelIdx < this.world.levels.length - 1) {
+            this.start(this.levelIdx + 1);
+        } else {
+            this.showLevels(this.world.id);
+        }
+    },
+
+    quit() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+        this.showLevels(this.world.id);
+    },
 
     showHint(txt) {
         const p = document.createElement('div');
         p.className = 'learn-popup';
         p.innerHTML = `<p>${txt}</p><button onclick="this.parentElement.remove()">Got it!</button>`;
         document.body.appendChild(p);
-        setTimeout(() => p.remove?.(), 8000);
+        setTimeout(() => p.remove?.(), 10000);
     },
 
     showSandbox() {
@@ -537,26 +900,37 @@ const Game = {
         document.getElementById('level-title').textContent = '🔬 Quantum Lab';
         document.getElementById('move-count').textContent = '∞';
         document.getElementById('move-max').textContent = '∞';
-        this.sandboxQ = ['0', '0'];
+        this.sandboxQ = ['0', '0', '0'];
+        this.sandboxGate = null;
+        this.sandboxFirst = null;
+        this.renderSandbox();
+    },
+
+    renderSandbox() {
         document.getElementById('game-main').innerHTML = `
             <div class="sandbox-container">
-                <div class="puzzle-instruction">Experiment freely! Apply gates and watch quantum states change.</div>
+                <div class="puzzle-instruction">Experiment freely with all gates! Build circuits and explore quantum states.</div>
                 <div class="qubits-display">
-                    <div class="qubit state-0" id="sq0" onclick="Game.sandboxApply(0)">|0⟩<div class="qubit-label">q0</div></div>
-                    <div class="qubit state-0" id="sq1" onclick="Game.sandboxApply(1)">|0⟩<div class="qubit-label">q1</div></div>
+                    ${this.sandboxQ.map((q, i) => {
+                        const css = STATES[q]?.css || 'state-0';
+                        const display = STATES[q]?.display || '|0⟩';
+                        return `<div class="qubit ${css}" id="sq${i}" onclick="Game.sandboxApply(${i})">${display}<div class="qubit-label">q${i}</div></div>`;
+                    }).join('')}
                 </div>
                 <div class="gates-panel">
-                    <button class="gate-btn" onclick="Game.sandboxGate='X';this.parentElement.querySelectorAll('.gate-btn').forEach(b=>b.classList.remove('selected'));this.classList.add('selected')">X<span>NOT</span></button>
-                    <button class="gate-btn" onclick="Game.sandboxGate='H';this.parentElement.querySelectorAll('.gate-btn').forEach(b=>b.classList.remove('selected'));this.classList.add('selected')">H<span>Hadamard</span></button>
-                    <button class="gate-btn" onclick="Game.sandboxGate='Z';this.parentElement.querySelectorAll('.gate-btn').forEach(b=>b.classList.remove('selected'));this.classList.add('selected')">Z<span>Phase</span></button>
+                    ${Object.entries(GATES).map(([k, v]) => `
+                        <button class="gate-btn ${v.twoQ ? 'two-qubit' : ''}" onclick="Game.sandboxSelect('${k}')">${v.sym}<span>${v.name}</span></button>
+                    `).join('')}
                 </div>
                 <div class="state-output">
-                    <div id="sandbox-state">State: |00⟩</div>
+                    <div>State: ${this.sandboxQ.map(q => STATES[q]?.display || '|?⟩').join('')}</div>
                     <div class="prob-bars">
-                        <div class="prob-bar"><div class="prob-fill"><div class="prob-inner" id="p00" style="height:100%"></div></div><span>|00⟩</span></div>
-                        <div class="prob-bar"><div class="prob-fill"><div class="prob-inner" id="p01" style="height:0%"></div></div><span>|01⟩</span></div>
-                        <div class="prob-bar"><div class="prob-fill"><div class="prob-inner" id="p10" style="height:0%"></div></div><span>|10⟩</span></div>
-                        <div class="prob-bar"><div class="prob-fill"><div class="prob-inner" id="p11" style="height:0%"></div></div><span>|11⟩</span></div>
+                        ${this.getSandboxProbs().map((p, i) => `
+                            <div class="prob-bar">
+                                <div class="prob-fill"><div class="prob-inner" style="height:${p*100}%"></div></div>
+                                <span>|${i.toString(2).padStart(3,'0')}⟩</span>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
                 <div class="action-buttons">
@@ -565,106 +939,79 @@ const Game = {
                 </div>
             </div>
         `;
-        this.sandboxGate = null;
     },
 
-    sandboxApply(i) {
+    sandboxSelect(g) {
+        this.sandboxGate = g;
+        this.sandboxFirst = null;
+    },
+
+    sandboxApply(idx) {
         if (!this.sandboxGate) return;
-        this.sandboxQ[i] = this.transform(this.sandboxGate, this.sandboxQ[i]);
+        const gateInfo = GATES[this.sandboxGate];
+
+        if (gateInfo.twoQ) {
+            if (this.sandboxFirst === null) {
+                this.sandboxFirst = idx;
+                return;
+            }
+            // Apply two-qubit gate
+            if (this.sandboxGate === 'CX') {
+                if (this.sandboxQ[this.sandboxFirst] === '1') {
+                    this.sandboxQ[idx] = TRANSFORMS['X'][this.sandboxQ[idx]] || this.sandboxQ[idx];
+                }
+            } else if (this.sandboxGate === 'CZ') {
+                if (this.sandboxQ[this.sandboxFirst] === '1' && this.sandboxQ[idx] === '1') {
+                    // Phase flip (not directly visible in our simplified model)
+                }
+            } else if (this.sandboxGate === 'SWAP') {
+                [this.sandboxQ[this.sandboxFirst], this.sandboxQ[idx]] = [this.sandboxQ[idx], this.sandboxQ[this.sandboxFirst]];
+            }
+            this.sandboxFirst = null;
+        } else {
+            this.sandboxQ[idx] = TRANSFORMS[this.sandboxGate]?.[this.sandboxQ[idx]] || this.sandboxQ[idx];
+        }
+
         this.sandboxGate = null;
-        document.querySelectorAll('.gates-panel .gate-btn').forEach(b => b.classList.remove('selected'));
-        this.sandboxUpdate();
+        this.renderSandbox();
     },
 
-    sandboxReset() { this.sandboxQ = ['0', '0']; this.sandboxUpdate(); },
-
-    sandboxUpdate() {
-        this.sandboxQ.forEach((s, i) => {
-            const el = document.getElementById(`sq${i}`);
-            el.className = `qubit state-${this.cls(s)}`;
-            el.childNodes[0].textContent = this.sym(s);
-        });
-        document.getElementById('sandbox-state').textContent = `State: ${this.sandboxQ.map(s => this.sym(s)).join('')}`;
-        const probs = this.calcProbs();
-        ['00', '01', '10', '11'].forEach((k, i) => {
-            document.getElementById(`p${k}`).style.height = `${probs[i] * 100}%`;
-        });
+    sandboxReset() {
+        this.sandboxQ = ['0', '0', '0'];
+        this.sandboxGate = null;
+        this.sandboxFirst = null;
+        this.renderSandbox();
     },
 
-    calcProbs() {
-        const [a, b] = this.sandboxQ;
-        if (a === '0' && b === '0') return [1, 0, 0, 0];
-        if (a === '0' && b === '1') return [0, 1, 0, 0];
-        if (a === '1' && b === '0') return [0, 0, 1, 0];
-        if (a === '1' && b === '1') return [0, 0, 0, 1];
-        if ((a === '+' || a === '-') && b === '0') return [0.5, 0, 0.5, 0];
-        if ((a === '+' || a === '-') && b === '1') return [0, 0.5, 0, 0.5];
-        if (a === '0' && (b === '+' || b === '-')) return [0.5, 0.5, 0, 0];
-        if (a === '1' && (b === '+' || b === '-')) return [0, 0, 0.5, 0.5];
-        return [0.25, 0.25, 0.25, 0.25];
+    getSandboxProbs() {
+        // Simplified probability calculation
+        const probs = new Array(8).fill(0);
+        let totalStates = 1;
+        const superPositions = this.sandboxQ.filter(q => q === '+' || q === '-').length;
+        totalStates = Math.pow(2, superPositions);
+
+        if (superPositions === 0) {
+            const idx = parseInt(this.sandboxQ.map(q => q === '1' ? '1' : '0').join(''), 2);
+            probs[idx] = 1;
+        } else {
+            // Distribute probability among possible states
+            const baseProb = 1 / totalStates;
+            for (let i = 0; i < 8; i++) {
+                let matches = true;
+                for (let q = 0; q < 3; q++) {
+                    const bit = (i >> (2-q)) & 1;
+                    const state = this.sandboxQ[q];
+                    if (state === '0' && bit === 1) matches = false;
+                    if (state === '1' && bit === 0) matches = false;
+                }
+                if (matches) probs[i] = baseProb;
+            }
+        }
+        return probs;
     }
 };
 
-const GATES = {
-    'X': { sym: 'X', name: 'NOT' },
-    'H': { sym: 'H', name: 'Hadamard' },
-    'Z': { sym: 'Z', name: 'Phase' }
-};
-
-const WORLDS = [
-    {
-        id: 'w1', name: 'Qubit Basics', icon: '🌟', desc: 'Learn to flip qubits with the X gate',
-        levels: [
-            { instr: 'Flip the qubit from <strong>|0⟩</strong> to <strong>|1⟩</strong> using the X gate', init: ['0'], target: ['1'], gates: ['X'], maxMoves: 3, perfect: 1, good: 2, hint: '💡 Click X, then click the qubit!' },
-            { instr: 'Flip <strong>both</strong> qubits to |1⟩', init: ['0', '0'], target: ['1', '1'], gates: ['X'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: 'Flip only the <strong>second</strong> qubit', init: ['0', '0'], target: ['0', '1'], gates: ['X'], maxMoves: 3, perfect: 1, good: 2 },
-            { instr: 'Get from |1⟩|1⟩ to |0⟩|0⟩', init: ['1', '1'], target: ['0', '0'], gates: ['X'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: 'Swap the states: |0⟩|1⟩ → |1⟩|0⟩', init: ['0', '1'], target: ['1', '0'], gates: ['X'], maxMoves: 4, perfect: 2, good: 3 }
-        ]
-    },
-    {
-        id: 'w2', name: 'Superposition', icon: '🌀', desc: 'Create quantum superposition with H gate',
-        levels: [
-            { instr: 'Use <strong>H</strong> to create superposition <strong>|+⟩</strong>', init: ['0'], target: ['+'], gates: ['H'], maxMoves: 3, perfect: 1, good: 2, hint: '💡 H creates superposition from |0⟩ or |1⟩' },
-            { instr: 'Create <strong>|-⟩</strong> from |1⟩', init: ['1'], target: ['-'], gates: ['H'], maxMoves: 3, perfect: 1, good: 2 },
-            { instr: 'Put <strong>both</strong> qubits in superposition', init: ['0', '0'], target: ['+', '+'], gates: ['H'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: 'H is its own inverse! Go from |+⟩ back to |0⟩', init: ['+'], target: ['0'], gates: ['H'], maxMoves: 3, perfect: 1, good: 2 },
-            { instr: 'Create |+⟩|0⟩', init: ['0', '0'], target: ['+', '0'], gates: ['H', 'X'], maxMoves: 3, perfect: 1, good: 2 }
-        ]
-    },
-    {
-        id: 'w3', name: 'Gate Combos', icon: '🎯', desc: 'Combine X and H gates strategically',
-        levels: [
-            { instr: 'Get to <strong>|1⟩</strong> from |+⟩', init: ['+'], target: ['1'], gates: ['X', 'H'], maxMoves: 3, perfect: 2, good: 2, hint: '💡 H turns |+⟩ to |0⟩, then...' },
-            { instr: 'Create <strong>|-⟩</strong> from |0⟩', init: ['0'], target: ['-'], gates: ['X', 'H'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: 'Transform |+⟩|1⟩ → |0⟩|0⟩', init: ['+', '1'], target: ['0', '0'], gates: ['X', 'H'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: 'Make <strong>|1⟩|-⟩</strong>', init: ['0', '0'], target: ['1', '-'], gates: ['X', 'H'], maxMoves: 5, perfect: 3, good: 4 },
-            { instr: 'Challenge: |-⟩|+⟩ from |0⟩|0⟩', init: ['0', '0'], target: ['-', '+'], gates: ['X', 'H'], maxMoves: 5, perfect: 3, good: 4 }
-        ]
-    },
-    {
-        id: 'w4', name: 'Phase Master', icon: '🔮', desc: 'Control quantum phase with Z gate',
-        levels: [
-            { instr: 'Z flips phase: <strong>|+⟩ → |-⟩</strong>', init: ['+'], target: ['-'], gates: ['Z'], maxMoves: 3, perfect: 1, good: 2, hint: '💡 Z only affects superposition states!' },
-            { instr: 'Get to |-⟩ from |0⟩', init: ['0'], target: ['-'], gates: ['X', 'H', 'Z'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: 'Transform |-⟩ to |+⟩', init: ['-'], target: ['+'], gates: ['Z'], maxMoves: 3, perfect: 1, good: 2 },
-            { instr: 'Make |-⟩|-⟩ from |+⟩|+⟩', init: ['+', '+'], target: ['-', '-'], gates: ['Z'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: 'Ultimate: |-⟩|1⟩ from |0⟩|0⟩', init: ['0', '0'], target: ['-', '1'], gates: ['X', 'H', 'Z'], maxMoves: 5, perfect: 3, good: 4 }
-        ]
-    },
-    {
-        id: 'w5', name: 'Quantum Master', icon: '👑', desc: 'The ultimate challenge',
-        levels: [
-            { instr: 'Minimum moves only!', init: ['1', '+'], target: ['+', '1'], gates: ['X', 'H', 'Z'], maxMoves: 4, perfect: 2, good: 3 },
-            { instr: '|0⟩|-⟩ → |-⟩|0⟩', init: ['0', '-'], target: ['-', '0'], gates: ['X', 'H', 'Z'], maxMoves: 5, perfect: 3, good: 4 },
-            { instr: 'Triple transform', init: ['1', '1'], target: ['-', '-'], gates: ['X', 'H', 'Z'], maxMoves: 6, perfect: 4, good: 5 },
-            { instr: 'The reversal', init: ['-', '+'], target: ['0', '1'], gates: ['X', 'H', 'Z'], maxMoves: 5, perfect: 3, good: 4 },
-            { instr: '🏆 Boss Level', init: ['1', '-'], target: ['-', '+'], gates: ['X', 'H', 'Z'], maxMoves: 6, perfect: 4, good: 5 }
-        ]
-    }
-];
-
-// Initialize when DOM is ready
+// Initialize
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => Game.init());
 } else {
